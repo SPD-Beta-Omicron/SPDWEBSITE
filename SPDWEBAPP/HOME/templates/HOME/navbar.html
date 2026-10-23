@@ -43,9 +43,6 @@
             <li class="nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
               <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
             </li>
-            <li class="nav-item {% if request.resolver_match.url_name == 'poll' %}active{% endif %}">
-              <a class="nav-link" href="{% url 'poll' %}">Parley Pro</a>
-            </li>
             <li class="nav-item {% if request.resolver_match.url_name == 'roster' %}active{% endif %}">
                 <a class="nav-link" href="{% url 'roster' %}">Roster</a>
             </li>
@@ -54,6 +51,9 @@
             </li>
             <li class="nav-item {% if request.resolver_match.url_name == 'newmember_marks_dashboard' %}active{% endif %}">
                 <a class="nav-link" href="{% url 'newmember_marks_dashboard' %}">New Member Marks</a>
+            </li>
+            <li class="nav-item {% if request.resolver_match.url_name == 'sobersheet_dashboard' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'sobersheet_dashboard' %}">Sober Sheet</a>
             </li>
         </ul>
 
