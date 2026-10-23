@@ -1,0 +1,1 @@
+Remember to include: naming conventions, code style, file placement, shared components, issue and PR templates, etc.
