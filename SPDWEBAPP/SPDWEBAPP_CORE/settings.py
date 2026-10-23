@@ -65,7 +65,7 @@ if ENVIRONMENT == 'production': # only have DEBUG=TRUE if the environment is loc
 else:
     DEBUG = True
 
-ALLOWED_HOSTS = ['sigmaphideltamizzou.online', 'www.sigmaphideltamizzou.online', 'spdmizzou.com', 'www.spdmizzou.com', 'spdmizzou.org', 'www.spdmizzou.org', '54.226.39.191','localhost','127.0.0.1']
+ALLOWED_HOSTS = ['spdmizzou.com', 'www.spdmizzou.com', 'spdmizzou.org', 'www.spdmizzou.org', '54.226.39.191','localhost','127.0.0.1']
 
 LOGIN_URL = '/auth/login'  # Adjust this to match your authenticate app's URL pattern
 LOGIN_REDIRECT_URL = ''
