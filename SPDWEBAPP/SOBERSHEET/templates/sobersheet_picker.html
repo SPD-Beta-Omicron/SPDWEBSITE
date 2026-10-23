@@ -1,0 +1,75 @@
+{% extends 'HOME/main.html' %}
+{% load static %}
+
+{% block content %}
+<div class="profile-container">
+    <h1 class="homepage-heading">Pick Sobers</h1>
+
+    <div class="profile-card mb-4">
+        <form method="POST" class="form">
+            {% csrf_token %}
+
+            <div class="form-group mb-3">
+                <label for="count">Number of sobers needed</label>
+                <input type="number" min="1" max="50" class="form-control" id="count" name="count" value="{{ count }}" required>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="method">Selection method</label>
+                <select class="form-select" id="method" name="method">
+                    <option value="earliest" {% if method == 'earliest' %}selected{% endif %}>Earliest sober date first</option>
+                    <option value="random" {% if method == 'random' %}selected{% endif %}>Random within the group</option>
+                </select>
+            </div>
+
+            {% if messages %}
+            <div class="messages mb-3">
+                {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="dashboard-buttons">
+                <button type="submit" class="btn btn-primary">{% if picks %}Re-roll{% else %}Get Names{% endif %}</button>
+                <a href="{% url 'sobersheet_dashboard' %}" class="btn btn-secondary">Back to Rotation</a>
+            </div>
+        </form>
+    </div>
+
+    {% if picks %}
+    <div class="profile-card mb-4">
+        <h3 class="homepage-subheading">Up Next</h3>
+        <div class="table-responsive">
+            <table class="table">
+                <thead style="background-color: #1a1a1a;">
+                    <tr>
+                        <th style="color: white; padding: 15px 20px;">BROTHER</th>
+                        <th style="color: white; padding: 15px 20px;">GROUP</th>
+                        <th style="color: white; padding: 15px 20px;">LAST SOBERED</th>
+                        <th style="color: white; padding: 15px 20px;">TOTAL DUTIES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in picks %}
+                    <tr {% if forloop.counter|divisibleby:2 %}style="background-color: #f9f9f9;"{% endif %}>
+                        <td style="padding: 15px 20px;">
+                            <a href="{% url 'brother_sobersheet_history' p.profile.user_id %}" class="brother-link">{{ p.profile.firstName }} {{ p.profile.lastName }}</a>
+                        </td>
+                        <td style="padding: 15px 20px;">{{ p.group_label }}</td>
+                        <td style="padding: 15px 20px;">{% if p.last_date %}{{ p.last_date|date:"M d, Y" }}{% else %}Never{% endif %}</td>
+                        <td style="padding: 15px 20px;">{{ p.total }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <form method="GET" action="{% url 'sobersheet_log' %}" class="text-center mt-3">
+            {% for p in picks %}<input type="hidden" name="brothers" value="{{ p.profile.user_id }}">{% endfor %}
+            <button type="submit" class="btn btn-primary">Log These Brothers</button>
+        </form>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

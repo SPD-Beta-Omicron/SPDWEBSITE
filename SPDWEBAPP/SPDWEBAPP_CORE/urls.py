@@ -31,6 +31,7 @@ urlpatterns = [
     path('poll/',include('PARLEYPRO.urls')),
     path('philanthropy/',include('PHILANTHROPY.urls')),
     path('newmember/',include('NEWMEMBER.urls')),
+    path('sobersheet/', include('SOBERSHEET.urls')),
 ]
 
 # Serve media files in both development and production

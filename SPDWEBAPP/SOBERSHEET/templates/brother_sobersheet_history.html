@@ -1,0 +1,58 @@
+{% extends 'HOME/main.html' %}
+{% load static %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="text-center mb-4">
+        <h2 class="homepage-heading">{{ brother.firstName }} {{ brother.lastName }}'s Sober History</h2>
+        <p class="text-muted">Lifetime Duties: {{ lifetime_total }}</p>
+    </div>
+
+    <div class="dashboard-buttons mb-4">
+        <a href="{% url 'sobersheet_dashboard' %}" class="btn btn-primary">Back to Rotation</a>
+    </div>
+
+    {% for group in semester_groups %}
+    <div class="profile-card mb-4">
+        <h3 class="homepage-subheading">{{ group.label }}</h3>
+        <div class="table-responsive">
+            <table class="table">
+                <thead style="background-color: #1a1a1a;">
+                    <tr>
+                        <th style="color: white; padding: 15px 20px;">DATE</th>
+                        <th style="color: white; padding: 15px 20px;">EVENT</th>
+                        <th style="color: white; padding: 15px 20px;">DUTY</th>
+                        {% if is_risk_manager %}
+                        <th style="color: white; padding: 15px 20px;">ACTIONS</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for duty in group.duties %}
+                    <tr {% if forloop.counter|divisibleby:2 %}style="background-color: #f9f9f9;"{% endif %}>
+                        <td style="padding: 15px 20px;">{{ duty.event_date|date:"M d, Y" }}</td>
+                        <td style="padding: 15px 20px;">{{ duty.event_title }}</td>
+                        <td style="padding: 15px 20px;">{{ duty.get_duty_type_display }}</td>
+                        {% if is_risk_manager %}
+                        <td style="padding: 15px 20px;">
+                            <a href="{% url 'sobersheet_edit' duty_id=duty.id %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                            <form method="POST" action="{% url 'sobersheet_delete' duty_id=duty.id %}" class="d-inline"
+                                  onsubmit="return confirm('Delete this record?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                            </form>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% empty %}
+    <div class="profile-card">
+        <p class="text-center">No sober duties recorded yet.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

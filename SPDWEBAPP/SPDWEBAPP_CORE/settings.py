@@ -87,6 +87,7 @@ INSTALLED_APPS = [
     'MISC',
     'PHILANTHROPY',
     'NEWMEMBER',
+    'SOBERSHEET',
     'HOME',
 ]
 
