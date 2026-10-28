@@ -1,5 +1,6 @@
 from .models import NewMember_Mark_Event_and_Request
 from AUTHENTICATE.models import Brother_Profile
+from AUTHENTICATE.permissions import has_role
 from django.db.models import Sum
 from django.utils import timezone
 from datetime import date, timedelta
@@ -116,7 +117,7 @@ def get_active_member_analytics(new_members_progress):
 def create_mark_requests(requesting_user, target_users, mark_value, mark_reason, mark_date):
     """Create multiple mark requests, auto-approve if NM_BOARD"""
     try:
-        is_board_member = check_user_role(requesting_user, 'NM_BOARD')
+        is_board_member = has_role(requesting_user, 'NM_BOARD')
         created_marks = []
         for user_id in target_users:
             new_mark = NewMember_Mark_Event_and_Request(
@@ -186,7 +187,3 @@ def get_member_mark_history(user_id):
     )['total'] or 0
     
     return marks, total_marks
-
-def check_user_role(user, role_name):
-    """Check if user has a specific role"""
-    return user.brother_profile.roles.filter(name=role_name).exists()

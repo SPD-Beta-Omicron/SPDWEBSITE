@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 from .views_functions import *
 from django.contrib.auth.models import User
 from AUTHENTICATE.models import PClass
+from AUTHENTICATE.permissions import has_role
 
 def newmember_dashboard(request):
     return render(request, 'NEWMEMBER/newmember_dashboard.html')
@@ -14,8 +15,8 @@ def newmember_marks_dashboard(request):
     new_members = get_new_members()
     new_members_progress = calculate_member_marks(new_members)
     
-    is_active = check_user_role(request.user, 'ACTIVE')
-    is_new_member = check_user_role(request.user, 'NEW_MEMBER')
+    is_active = has_role(request.user, 'ACTIVE')
+    is_new_member = has_role(request.user, 'NEW_MEMBER')
     user_submitted_marks = get_user_submitted_marks(request.user) if is_active else None
 
     # Calculate analytics based on user role
@@ -33,7 +34,7 @@ def newmember_marks_dashboard(request):
         'new_members_progress': new_members_progress,
         'user_submitted_marks': user_submitted_marks,
         'is_active': is_active,
-        'is_new_member_board': check_user_role(request.user, 'NM_BOARD'),
+        'is_new_member_board': has_role(request.user, 'NM_BOARD'),
         'analytics': analytics,
         'personal_stats': personal_stats,
         'pclasses': sorted_pclasses
@@ -45,7 +46,7 @@ def newmember_marks_dashboard(request):
 
 @login_required
 def newmember_request(request):
-    if not check_user_role(request.user, 'ACTIVE'):
+    if not has_role(request.user, 'ACTIVE'):
         messages.error(request, 'Only active members can submit marks.')
         return redirect('newmember_marks_dashboard')
         
@@ -69,7 +70,7 @@ def newmember_request(request):
 
 @login_required
 def newmember_approve(request):
-    if not check_user_role(request.user, 'NM_BOARD'):
+    if not has_role(request.user, 'NM_BOARD'):
         messages.error(request, 'Only New Member Board members can approve marks.')
         return redirect('newmember_marks_dashboard')
         
@@ -100,7 +101,7 @@ def newmember_mark_history(request, user_id):
         
         marks, total_marks = get_member_mark_history(user_id)
 
-        is_nm_board = request.user.brother_profile.roles.filter(name="NM_BOARD").exists()
+        is_nm_board = has_role(request.user, "NM_BOARD")
         
         context = {
             'new_member': new_member,
@@ -121,7 +122,7 @@ def newmember_mark_history(request, user_id):
 @login_required
 def newmember_edit_mark(request, mark_id):
     # Only NM_BOARD can edit
-    if not check_user_role(request.user, 'NM_BOARD'):
+    if not has_role(request.user, 'NM_BOARD'):
         messages.error(request, 'Only New Member Board members can edit marks.')
         return redirect('newmember_marks_dashboard')
 
@@ -131,7 +132,7 @@ def newmember_edit_mark(request, mark_id):
         action = request.POST.get('action')
 
         if action == 'deny':  # Handle the deny action
-            if not check_user_role(request.user, 'NME'):
+            if not has_role(request.user, 'NME'):
                 messages.error(request, 'Only New Member Educators can deny marks.')
                 return redirect('newmember_marks_dashboard')
             mark.mark_approval_status = 'denied'
@@ -190,7 +191,7 @@ def export_approved_newmember_marks(request):
     pclass = request.GET.get('pclass')
 
 
-    if check_user_role(request.user, 'NEW_MEMBER') and pclass != 'Current':
+    if has_role(request.user, 'NEW_MEMBER') and pclass != 'Current':
         messages.error(request, 'You do not have permission to export marks for previous classes.')
         return redirect('newmember_marks_dashboard')
 

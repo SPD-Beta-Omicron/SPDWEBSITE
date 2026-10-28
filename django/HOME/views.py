@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from AUTHENTICATE.models import * # Import Member from database
-from PARLEYPRO.pp_decorators import requires_role
+from AUTHENTICATE.permissions import requires_role
 from MISC.models import AnnouncementAlert
 from .models import BannerImage, RushFormLink, RushSlide
 

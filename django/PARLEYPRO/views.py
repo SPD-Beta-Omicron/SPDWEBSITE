@@ -6,7 +6,7 @@ from django.contrib import messages
 from .models import *
 from .forms import *
 from .pp_functions import *
-from .pp_decorators import requires_role
+from AUTHENTICATE.permissions import requires_role
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from .forms import VotePollForm

@@ -5,13 +5,9 @@ from django.contrib import messages
 from django.views.decorators.http import require_POST
 
 from AUTHENTICATE.models import Brother_Profile
-from PARLEYPRO.pp_decorators import requires_role
+from AUTHENTICATE.permissions import requires_role, has_role
 from .models import Sober_Duty
 from .views_functions import build_sobersheet_queue, group_history_by_event, retrieve_individual_sobersheet_history, build_exempt_list, pick_next_sobers
-
-
-def _is_risk_manager(user):
-    return user.brother_profile.roles.filter(name='RISK_MGR').exists()
 
 
 @login_required
@@ -19,7 +15,7 @@ def _is_risk_manager(user):
 def sobersheet_dashboard(request):
     context = {
         'queue_groups': build_sobersheet_queue(),
-        'is_risk_manager': _is_risk_manager(request.user),
+        'is_risk_manager': has_role(request.user, 'RISK_MGR'),
         'exempt_brothers': build_exempt_list(),
     }
     return render(request, 'SOBERSHEET/sobersheet_dashboard.html', context)
@@ -30,7 +26,7 @@ def sobersheet_dashboard(request):
 def sobersheet_history(request):
     context = {
         'history_groups': group_history_by_event(),
-        'is_risk_manager': _is_risk_manager(request.user),
+        'is_risk_manager': has_role(request.user, 'RISK_MGR'),
     }
     return render(request, 'SOBERSHEET/sobersheet_history.html', context)
 
@@ -48,7 +44,7 @@ def brother_sobersheet_history(request, user_id):
         'brother': brother,
         'semester_groups': semester_groups,
         'lifetime_total': lifetime_total,
-        'is_risk_manager': _is_risk_manager(request.user),
+        'is_risk_manager': has_role(request.user, 'RISK_MGR'),
     }
     return render(request, 'SOBERSHEET/brother_sobersheet_history.html', context)
 

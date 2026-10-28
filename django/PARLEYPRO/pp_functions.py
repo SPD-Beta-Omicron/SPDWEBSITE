@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.utils import timezone
 from .models import *
 from AUTHENTICATE.models import Brother_Profile
+from AUTHENTICATE.permissions import has_role
 
 
 def count_all_current_votes(all_votes):
@@ -20,13 +21,12 @@ def handling_end_vote_request(request, all_votes):
     then the poll is ended
     
     '''
-    brother_profile = Brother_Profile.objects.get(user=request.user)
-    current_poll = Vote_Poll.objects.filter(Vote_Poll_End__isnull=True).order_by('-Vote_Poll_Start').first()
-    user_roles = list(brother_profile.roles.values_list('name', flat=True))
-        
-    if 'EXEC' not in user_roles:
+    if not has_role(request.user, 'EXEC'):
         messages.error(request, "You need to be an EXEC member to end votes.")
-        
+        return
+
+    current_poll = Vote_Poll.objects.filter(Vote_Poll_End__isnull=True).order_by('-Vote_Poll_Start').first()
+
     if current_poll:
         # Get final vote counts
         aye_votes, nay_votes = count_all_current_votes(all_votes)

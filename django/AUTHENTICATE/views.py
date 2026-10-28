@@ -12,11 +12,11 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import messages
 from .utils import contains_profanity
-from NEWMEMBER.views_functions import check_user_role
+from .permissions import has_role
 from NEWMEMBER.views import newmember_dashboard
 
 # Announcement Model
-from PARLEYPRO.pp_decorators import requires_role
+from AUTHENTICATE.permissions import requires_role
 from MISC.models import AnnouncementAlert
 
 
@@ -25,7 +25,7 @@ from .models import DashboardLink
 
 @login_required
 def dashboard(request):
-    is_new_member = check_user_role(request.user, "NEW_MEMBER")
+    is_new_member = has_role(request.user, "NEW_MEMBER")
     if is_new_member:
         return redirect("/newmember/")
 

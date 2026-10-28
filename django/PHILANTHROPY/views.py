@@ -5,7 +5,7 @@ from .models import Philanthropy_Hours_Event_and_Request
 from AUTHENTICATE.models import Brother_Profile, Role
 from django.utils import timezone
 
-from PARLEYPRO.pp_decorators import requires_role
+from AUTHENTICATE.permissions import requires_role, has_role
 import calendar
 
 
@@ -35,7 +35,7 @@ def philanthropy_dashboard(request):
     avg_hours_per_brother = total_chapter_hours / total_active_members if total_active_members > 0 else 0
 
     # Get user's personal events
-    is_philanthropy_chair = request.user.brother_profile.roles.filter(name='PHILANTHROPY_CHAIR').exists()
+    is_philanthropy_chair = has_role(request.user, 'PHIL_CHAIR')
     user_events = None
     user_total_hours = 0
     
@@ -101,7 +101,7 @@ def brother_philanthropy_history(request, user_id):
     from .views_functions import retrieve_individual_brother_history
     try:
         brother = Brother_Profile.objects.select_related('user').get(user_id=user_id)
-        is_philanthropy_chair = request.user.brother_profile.roles.filter(name="PHIL_CHAIR").exists()
+        is_philanthropy_chair = has_role(request.user, 'PHIL_CHAIR')
 
         #grabs and sorts all of the brothers philanthropy history, outputs the total approved hours per semester
         academic_year_totals, lifetime_event_total = retrieve_individual_brother_history(brother, user_id)
@@ -244,7 +244,7 @@ from django.shortcuts import get_object_or_404
 @requires_role('PHIL_CHAIR')
 def philanthropy_edit_event(request, event_id):
     # Only PHIL_CHAIR can edit
-    #if not check_user_role(request.user, 'PHIL_CHAIR'):
+    #if not has_role(request.user, 'PHIL_CHAIR'):
     #    messages.error(request, 'Only Philanthropy Chair members can edit events.')
     #    return redirect('philanthropy_dashboard')
 
