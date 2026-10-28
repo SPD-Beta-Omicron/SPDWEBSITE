@@ -1,0 +1,237 @@
+{% extends 'HOME/main.html' %}
+{% load static %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="text-center mb-5">
+        <h2 class="homepage-heading">{% if editing %} Edit Mark {% else %} Submit New Member Marks {% endif %}</h2>
+    </div>
+    
+    <div class="profile-card shadow-sm mx-auto">
+        <form method="POST" class="p-4 p-md-5">
+            {% csrf_token %}
+            
+            <div class="mb-4">
+                <label class="form-label fw-bold mb-3">Select New Members</label>
+                <div class="select-container">
+                    <select name="{% if editing %}target_user{% else %}target_users{% endif %}" id="target_users" class="form-select custom-select" {% if not editing %} multiple {% endif %} required>
+                        {% for member in new_members %}
+                            <option value="{{ member.user.id }}" {% if editing and member.user.id == mark.target_user.id %}selected{% endif %}>
+                                {{ member.firstName }} {{ member.lastName }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    {% if not editing %}
+                        <div class="select-help">
+                            <i class="fas fa-info-circle text-muted me-2"></i>
+                            Hold Ctrl (Windows) or Cmd (Mac) to select multiple members
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="row mb-4">
+                <div class="col-md-6 mb-4 mb-md-0">
+                    <label class="form-label fw-bold">Marks Value</label>
+                    <div class="marks-input-container">
+                        <input type="number" step="1" class="form-control custom-input" id="mark_value" name="mark_value" value="{% if editing %}{{ mark.mark_value }}{% endif %}" required>
+                        <div class="input-help">
+                            <i class="fas fa-info-circle text-muted me-2"></i>
+                            Can be positive or negative
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Date</label>
+                    <input type="date" class="form-control custom-input" id="mark_date" name="mark_date" value="{% if editing %}{{ mark.mark_event_date|date:'Y-m-d' }}{% endif %}" required>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <label class="form-label fw-bold">Reason</label>
+                <input type="text" class="form-control custom-input" id="mark_reason" name="mark_reason" value="{% if editing %}{{ mark.mark_event_title }}{% endif %}" required>
+            </div>
+            
+            <div class="selected-members-preview mb-4 d-none">
+                <label class="form-label fw-bold">Selected Members:</label>
+                <div id="selected-members-list" class="selected-members-container">
+                </div>
+            </div>
+            
+            <div class="text-center mt-5">
+                    <button type="submit" class="btn btn-submit me-3" name="action" value="{% if editing %}update{% else %}submit{% endif %}">
+                        {% if editing %} Update Mark {% else %} Submit Marks {% endif %}
+                    </button>
+                    {% if editing %}
+                        <button type="submit" class="btn btn-deny" name="action" value="deny" id="deny-button">Deny</button>
+                    {% endif %}
+                    <a href="{% url 'dashboard' %}" class="btn btn-cancel">Cancel</a>
+                </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.profile-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.profile-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.custom-select {
+    min-height: 200px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 15px;
+    transition: border-color 0.2s ease;
+}
+
+.custom-select:focus {
+    border-color: #c40000;
+    box-shadow: 0 0 0 0.2rem rgba(196, 0, 0, 0.1);
+}
+
+.custom-input {
+    height: 48px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 10px 15px;
+    font-size: 15px;
+    transition: all 0.2s ease;
+}
+
+.custom-input:focus {
+    border-color: #c40000;
+    box-shadow: 0 0 0 0.2rem rgba(196, 0, 0, 0.1);
+}
+
+.select-container, .marks-input-container {
+    position: relative;
+}
+
+.select-help, .input-help {
+    font-size: 13px;
+    color: #666;
+    margin-top: 8px;
+}
+
+.selected-members-container {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 15px;
+    min-height: 60px;
+    border: 2px solid #e0e0e0;
+}
+
+.selected-member {
+    display: inline-block;
+    margin: 5px;
+}
+
+.badge {
+    font-size: 14px;
+    padding: 8px 12px;
+    border-radius: 20px;
+    background-color: #c40000;
+    color: white;
+    font-weight: 500;
+}
+
+.btn {
+    padding: 12px 30px;
+    border-radius: 10px;
+    font-weight: 500;
+    font-size: 16px;
+    transition: all 0.2s ease;
+}
+
+.btn-submit {
+    background-color: #c40000;
+    color: white;
+    border: none;
+}
+
+.btn-submit:hover {
+    background-color: #a00000;
+    transform: translateY(-1px);
+}
+
+.btn-cancel {
+    background-color: #f8f9fa;
+    color: #333;
+    border: 2px solid #e0e0e0;
+}
+
+.btn-cancel:hover {
+    background-color: #e9ecef;
+    color: #333;
+}
+
+.form-label {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+@media (max-width: 768px) {
+    .profile-container {
+        padding: 1rem;
+    }
+    
+    .custom-select {
+        min-height: 150px;
+    }
+    
+    .btn {
+        width: 100%;
+        margin: 5px 0;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const selectElement = document.getElementById('target_users');
+    const previewDiv = document.querySelector('.selected-members-preview');
+    const previewList = document.getElementById('selected-members-list');
+
+    selectElement.addEventListener('change', function() {
+        const selectedOptions = Array.from(this.selectedOptions);
+        
+        if (selectedOptions.length > 0) {
+            previewDiv.classList.remove('d-none');
+            previewList.innerHTML = selectedOptions
+                .map(option => `<div class="selected-member">
+                    <span class="badge">
+                        <i class="fas fa-user me-2"></i>${option.text}
+                    </span>
+                </div>`)
+                .join('');
+        } else {
+            previewDiv.classList.add('d-none');
+            previewList.innerHTML = '';
+        }
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const denyButton = document.getElementById('deny-button');
+    if (denyButton) {
+        denyButton.addEventListener('click', function(event) {
+            const confirmDeny = confirm("Are you sure you want to deny this mark? This action cannot be undone and will overwrite the decision of another user.");
+            if (!confirmDeny) {
+              event.preventDefault(); // Prevent the default form submission
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

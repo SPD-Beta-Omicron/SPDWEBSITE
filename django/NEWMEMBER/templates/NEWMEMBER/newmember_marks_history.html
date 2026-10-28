@@ -1,0 +1,72 @@
+{% extends 'HOME/main.html' %}
+{% load static %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="text-center mb-4">
+        <h2 class="homepage-heading">{{ new_member.firstName }} {{ new_member.lastName }}'s Mark History</h2>
+        <p class="text-muted">
+            Total Marks: 
+            <span {% if is_negative %}class="text-danger"{% endif %}>
+                {{ total_marks }}
+            </span>
+        </p>
+    </div>
+    
+    <div class="dashboard-buttons mb-4">
+        <a href="{% url 'newmember_marks_dashboard' %}" class="btn btn-primary">Back to Dashboard</a>
+    </div>
+
+    <div class="profile-card">
+        <div class="table-responsive">
+            <table class="table">
+                <thead style="background-color: #1a1a1a;">
+                    <tr>
+                        <th style="color: white; padding: 15px 20px;">ACTIVE MEMBER</th>
+                        <th style="color: white; padding: 15px 20px;">REASON</th>
+                        <th style="color: white; padding: 15px 20px;">MARKS</th>
+                        <th style="color: white; padding: 15px 20px;">DATE</th>
+                        {% if is_nm_board %}
+                            <th>Actions</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for mark in marks %}
+                    <tr {% if forloop.counter|divisibleby:2 %}style="background-color: #f9f9f9;"{% endif %}>
+                        <td data-label="ACTIVE MEMBER">{{ mark.requesting_user.brother_profile.firstName }} {{ mark.requesting_user.brother_profile.lastName }}</td>
+                        <td data-label="REASON">{{ mark.mark_event_title }}</td>
+                        <td data-label="MARKS">{{ mark.mark_value }} {% if mark.last_edited_at %} <span style="color: grey;">[EDITED]</span>{% endif %}</td>
+                        <td data-lavel="DATE">{{ mark.mark_event_date|date:"M d, Y" }}</td>
+                        {% if is_nm_board %}
+                            <td><a href="{% url 'newmember_edit_mark' mark.id %}" class="btn btn-sm btn-success">Edit</a></td>
+                        {% endif %}
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">No marks recorded yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+.member-link:hover {
+    color: var(--primary-red) !important;
+    text-decoration: underline !important;
+}
+
+.text-danger {
+    color: #dc3545 !important;
+    font-weight: bold;
+}
+
+.badge {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+</style>
+{% endblock %}

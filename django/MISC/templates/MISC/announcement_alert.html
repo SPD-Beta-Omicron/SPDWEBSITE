@@ -1,0 +1,38 @@
+{% load static %}
+
+<head>
+    <link rel="stylesheet" href="{% static 'css/announcement.css' %}">
+</head>
+
+{% if announcements %}
+    <div class="announcement-container">
+        <table class="announcement-table">
+            <thead>
+                <tr>
+                    <th colspan="2" class="announcement-close">
+                        <button onclick="this.closest('table').style.display='none';" class="close-button">&times;</button>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for announcement in announcements %}
+                    <tr class="announcement-row">
+                        <td class="announcement-content">
+                            <div class="announcement-header">
+                                <h2 class="announcement-title">{{ announcement.title }}</h2>
+                                <p class="announcement-date">
+                                    {% if announcement.updated_at %}
+                                        <small>Updated on: {{ announcement.updated_at|date:"M d, Y, H:i" }}</small>
+                                    {% else %}
+                                        <small>Created on: {{ announcement.created_at|date:"M d, Y, H:i" }}</small>
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <p class="announcement-text">{{ announcement.content }}</p>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}

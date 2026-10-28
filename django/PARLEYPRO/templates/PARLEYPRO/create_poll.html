@@ -1,0 +1,28 @@
+{% extends 'HOME/main.html' %}
+{% block content %}
+
+<div class="create-poll-container">
+    <header class="poll-header">
+        <h1>Create New Poll</h1>
+        <a href="{% url 'poll' %}" class="btn btn-secondary">Back to Polls</a>
+    </header>
+
+    <div class="poll-form-container">
+        <form method="POST" class="poll-form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="{{ form.Vote_Poll_Name.id_for_label }}" class="form-label">Poll Name:</label>
+                {{ form.Vote_Poll_Name }}
+                {% if form.Vote_Poll_Name.errors %}
+                    <div class="error-message">
+                        {{ form.Vote_Poll_Name.errors }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Create Poll</button>
+            </div>
+        </form>
+    </div>
+</div>
+{%endblock%}

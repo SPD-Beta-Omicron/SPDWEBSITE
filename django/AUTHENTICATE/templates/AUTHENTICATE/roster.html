@@ -1,0 +1,234 @@
+{% extends 'HOME/main.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<link rel="stylesheet" href="{% static 'css/roster.css' %}">
+{% endblock %}
+
+{% block content %}
+<br>
+<div class="centered-table">
+    <div class="row">
+        <div class="col-12 p-md-3 p-0">
+          <div class="card card-body">
+            <table id="rosterTable" class="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th></th>  <!-- Photo column -->
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Class</th>
+                  <th>Major</th>
+                  <th>Hometown</th>
+                  <th id="roleHeader" style="position: relative;">
+                    Roles
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for Brother_Profile in Brother_Profiles %}
+                <tr>
+                  <td class="member-photo" data-label="">
+                    <img src="{% if Brother_Profile.profileImage %}{{ Brother_Profile.profileImage.url }}{% else %}{% static 'images/default_profile.png' %}{% endif %}"
+                         alt="{{ Brother_Profile.firstName }}'s Photo"
+                         class="roster-profile-img"
+                         onerror="this.src='{% static "images/default_profile.png" %}'">
+                  </td>
+                  <td class="member-firstName" data-label="First Name">{{ Brother_Profile.firstName }}</td>
+                  <td class="member-lastName" data-label="Last Name">{{ Brother_Profile.lastName }}</td>
+                  <td class="member-class" data-label="Class">{{ Brother_Profile.pclass|default:"" }}</td>
+                  <td class="member-majors" data-label="Major">{% for major in Brother_Profile.majors.all %}{{ major.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+                  <td class="member-hometown" data-label="Hometown">{{ Brother_Profile.hometown|default:"" }}</td>
+                  <td class="member-role" data-label="Roles" data-roles="{{ Brother_Profile.roles.all|join:"," }}">
+                    {{ Brother_Profile.roles.all|join:", " }}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script>
+  $(document).ready(function() {
+    // Check if we're on mobile
+    const isMobile = window.innerWidth < 768;
+    let dataTable;
+
+    // Use the pclass order from Django enum
+    const pclassOrder = {{ pclass_order|safe }};
+
+    // Define PClass sorting using enum order
+    $.fn.dataTable.ext.type.order['pclass-pre'] = function(data) {
+      // Return the order from Django enum, or 999 for empty/unknown values
+      return pclassOrder[data] || 999;
+    };
+
+    // Add custom sorting plug-in for handling empty values at the bottom
+    $.fn.dataTable.ext.order['pclass'] = function(settings, col) {
+      return this.api().column(col, {order: 'index'}).nodes().map(function(td, i) {
+        const text = $(td).text().trim();
+
+        // For empty values, always put at bottom regardless of sort direction
+        if (!text || text === '') {
+          return settings.aaSorting[0][1] === 'asc' ? 999999 : -999999;
+        }
+
+        // Use our PClass enum ordering
+        return $.fn.dataTable.ext.type.order['pclass-pre'](text);
+      });
+    };
+
+    function initializeTable() {
+      // Clear previous DataTable instance if it exists
+      if (dataTable) {
+        dataTable.destroy();
+        $('#rosterTable').removeClass('dataTable');
+      }
+
+      // Always use table view (not mobile-view)
+      $('#rosterTable').removeClass('mobile-view');
+
+      // Role information for sorting and display
+      const roleInfo = {
+        'Executive Board': { priority: 1, displayName: 'Executive Board' },
+        'New Member Board': { priority: 2, displayName: 'New Member Board' },
+      };
+
+      // Keep track of which role we're sorting by
+      let currentRoleIndex = 0;
+      const roleTypes = Object.keys(roleInfo);
+
+      // Initialize the DataTable with our custom sorting
+      dataTable = $('#rosterTable').DataTable({
+        "order": [[ 2, "asc" ]],  // Default sort by last name ascending
+        "columnDefs": [
+          { "orderable": false, "targets": 0 },  // Disable sorting on the photo column
+          {
+            "targets": 3, // Class column (0-indexed)
+            "type": "pclass",
+            "orderSequence": ["asc", "desc"]
+          }
+        ],
+        "language": {
+          "search": "Filter Brothers:",
+          "info": "Showing _TOTAL_ brothers",
+          "emptyTable": "No brothers available"
+        },
+        "paging": false,
+        "lengthChange": false,
+        "responsive": true,
+        "scrollX": isMobile,
+        "autoWidth": false,
+        "drawCallback": function(settings) {
+          // Move empty class rows to the bottom after each draw
+          moveEmptyClassesToBottom();
+        }
+      });
+
+      // Add a more subtle role indicator to the header text itself
+      $('#roleHeader').html('Roles <span class="role-sort-indicator"><span class="role-active-dot"></span><span id="roleSortType">Executive Board</span></span>');
+    }
+
+    // Add this function after the DataTable initialization
+    function moveEmptyClassesToBottom() {
+      // Get all rows with empty class values
+      const emptyClassRows = $('#rosterTable tbody tr').filter(function() {
+        return $(this).find('.member-class').text().trim() === '';
+      }).detach();
+
+      // If we found any empty class rows, append them to the bottom
+      if (emptyClassRows.length > 0) {
+        $('#rosterTable tbody').append(emptyClassRows);
+      }
+    }
+
+    // Initialize the table
+    initializeTable();
+
+    // Custom click handler for the Roles column header
+    $(document).on('click', '#roleHeader, #rosterTable thead th:eq(5)', function() {
+      // If already sorting by roles, cycle to next role type
+      if (dataTable.order()[0][0] === 5) {
+        // Move to the next role in our list
+        currentRoleIndex = (currentRoleIndex + 1) % roleTypes.length;
+      } else {
+        // First click on roles column, start with first role type
+        currentRoleIndex = 0;
+      }
+
+      // Update the indicator text
+      $('#roleSortType').text(roleTypes[currentRoleIndex]);
+
+      // Apply our custom role + lastname sorting
+      applyCustomSorting();
+
+      // Show the indicator
+      $('.role-sort-indicator').fadeIn(200);
+
+      // Prevent default DataTables click behavior
+      return false;
+    });
+
+    // Handle clicks on other column headers
+    $(document).on('click', '#rosterTable thead th', function() {
+      if ($(this).index() !== 5 && $(this).index() !== 0) {
+        // Hide the role indicator when sorting by other columns
+        $('.role-sort-indicator').fadeOut(200);
+      }
+    });
+
+    // Custom sorting function that sorts by role AND last name
+    function applyCustomSorting() {
+      const currentRole = roleTypes[currentRoleIndex];
+
+      // Get all rows as DOM elements
+      const rows = $('#rosterTable tbody tr').get();
+
+      // Custom sorting function
+      rows.sort(function(a, b) {
+        const roleA = $(a).find('.member-role').text().includes(currentRole);
+        const roleB = $(b).find('.member-role').text().includes(currentRole);
+
+        // First priority: Sort by whether they have the role
+        if (roleA && !roleB) return -1;
+        if (!roleA && roleB) return 1;
+
+        // If both have or both don't have the role, sort by last name
+        const lastNameA = $(a).find('.member-lastName').text().trim().toLowerCase();
+        const lastNameB = $(b).find('.member-lastName').text().trim().toLowerCase();
+
+        if (lastNameA < lastNameB) return -1;
+        if (lastNameA > lastNameB) return 1;
+        return 0;
+      });
+
+      // Reattach sorted rows to the table
+      $.each(rows, function(index, row) {
+        $('#rosterTable tbody').append(row);
+      });
+    }
+
+    // Also handle the sort event directly
+    dataTable.on('order.dt', function() {
+      moveEmptyClassesToBottom();
+    });
+
+    // Handle window resize
+    $(window).on('resize', function() {
+      const newIsMobile = window.innerWidth < 768;
+      if (newIsMobile !== isMobile) {
+        // Reload the page if we've crossed the mobile breakpoint
+        location.reload();
+      }
+    });
+  });
+</script>
+{% endblock %}

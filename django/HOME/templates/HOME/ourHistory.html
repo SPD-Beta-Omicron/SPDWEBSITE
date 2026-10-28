@@ -1,0 +1,59 @@
+{% extends 'HOME/main.html' %}
+{% load static %}
+
+{% block content %}
+<div class="homepage-content">
+    <div class="text-center mb-4">
+        <h2 class="homepage-heading">Our History</h2>
+    </div>
+    
+    <div class="text-container mx-auto">
+        <p>
+            Sigma Phi Delta is an international engineering fraternity founded upon the basic principles of truth and honesty at the 
+            University of Southern California in 1924. Their founders believed those basic principles should be the light guiding the
+            footsteps of an Engineer towards service and success. Since their founding in 1924, they have grown to 25 active chapters internationally.
+            The Beta-Omicron chapter of Sigma Phi Delta was founded at the University of Missouri on December 13th, 2014 with 30 members.
+            It has since grown to {{ num_actives }} active members of like-minded engineering students seeking to better themselves and the
+            Engineering profession.
+        </p>
+        <h3 class="homepage-subheading">Beta-Omicron History</h3>
+        <p>
+            The Beta-Omicron Chapter of Sigma Phi Delta began it's journey in late 2013 and early 2014 with Alumni Kyle J. White and
+            David S. Lindsay. These two then went on to recruit additional members to form a Colony of Sigma Phi Delta at the University of Missouri.
+            By February 9th, 2014, they had recruited an additional seven more men to form the colony: Justin C. Distler, Nicholas S. Endsley,
+            Ethan A. Wilken, Arvin C.S. Bustos, Alexander R. Chung, Michael R. Brooks, and Calvin D. Irwin. On February 25th 2014, the University
+            of Missouri Colony of Sigma Phi Delta was approved. 
+        </p>
+        <img class="text-center mt-4" src="{% static 'images/founding_members.webp' %}" alt="Founding Members" style="max-width: 100%;">
+        <p class="text-center mt-4">
+            The Founding Members of Sigma Phi Delta - University of Missouri
+        </p>
+        <p>
+            On the weekend of April 5th, 2014, Colonization Weekend was held where the original nine founders and the additional 26 recruited
+            members were gathered to conduct the Colonization Ceremony where the University of Missouri Colony of Sigma Phi Delta was officially
+            founded. Over the course of the next week, Colony officers were elected: David S. Lindsay as Chief Engineer, Justin C. Distler as
+            Vice-Chief Engineer, Arvin C.S. Bustos as Secretary, Ethan A. Wilken as Business Manager, Kyle J. White as Risk Reduction Chairman,
+            Michael R. Brooks as New Member Educator, Daniel J. Brewer and Ethan J. Roussin as Social Chairmen, and Chase L.S. Skawinski and
+            Spencer G. Tompkins as Recruitment Chairmen. On April 23rd, 2014, Dr. Roger C. Fales officially became the Colony's faculty advisor.
+        </p>
+        <img class="text-center mt-4" src="{% static 'images/colony_members.webp' %}" alt="Colony Members" style="max-width: 100%;">
+        <p class="text-center mt-4">
+            The Colony Members of Sigma Phi Delta - University of Missouri
+        </p>
+        <p>
+            On December 12-13th, 2014, the University of Missouri Colony of Sigma Phi Delta met with Jonathan W. Eastham, the Sigma Phi
+            Delta Central Province Director, to complete the chartering process of the Colony to become an official Chapter of Sigma Phi
+            Delta. On the evening of December 13th, 2014, the 30 remaining members of the Colony took part in the Initiation Ceremony
+            and become the new Beta-Omicron Chapter of Sigma Phi Delta's Charter Class.
+        </p>
+        <img class="text-center mt-4" src="{% static 'images/charter_class.webp' %}" alt="Charter Class" style="max-width: 100%;" loading="lazy">
+        <p class="text-center mt-4">
+            The Charter Class of the Beta-Omicron Chapter of Sigma Phi Delta
+        </p>
+
+        <div class="text-center mt-4">
+            <img src="{% static 'images/coatOfArms.webp' %}" alt="Coat of Arms" class="img-fluid" style="max-width: 150px;" loading="lazy">
+        </div>
+    </div>
+</div>
+{% endblock %}

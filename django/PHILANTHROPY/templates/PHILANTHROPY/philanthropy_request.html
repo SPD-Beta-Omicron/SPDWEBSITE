@@ -1,0 +1,44 @@
+{% extends 'HOME/main.html' %}
+{% load static %}
+
+{% block content %}
+<div class="profile-container">
+    <h1 class="homepage-heading">{% if editing %}Edit Philanthropy Hours{% else %}Submit Philanthropy Hours{% endif %}</h1>
+    
+    <div class="profile-card">
+        <form method="POST" class="form">
+            {% csrf_token %}
+            
+            <div class="form-group mb-3">
+                <label for="event_title">Event Title/Description</label>
+                <input type="text" class="form-control" id="event_title" name="event_title" value="{% if editing %}{{ event.philanthropy_event_title }}{% endif %}" required>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="hours">Hours</label>
+                <input type="number" step="0.5" min="0.5" class="form-control" id="hours" name="hours" value="{% if editing %}{{ event.philanthropy_event_hours }}{% endif %}" required>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="event_date">Event Date</label>
+                <input type="date" class="form-control" id="event_date" name="event_date" value="{% if editing %}{{ event.philanthropy_event_date|date:'Y-m-d' }}{% endif %}" required>
+            </div>
+
+            {% if messages %}
+            <div class="messages mb-3">
+                {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="dashboard-buttons">
+                <button type="submit" class="btn btn-primary">{% if editing %}Update Hours{% else %}Submit Hours{% endif %}</button>
+                <a href="{% url 'philanthropy_dashboard' %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

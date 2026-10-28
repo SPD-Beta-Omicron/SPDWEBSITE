@@ -1,0 +1,59 @@
+{% extends 'HOME/main.html' %}
+
+
+{% block content %}
+{% load tz %}
+<div class="vote-history-container">
+    <header class="vote-header">
+        <h1>Past Poll Results</h1>
+        <a href="{% url 'poll' %}" class="btn btn-primary">Back to Current Poll</a>
+    </header>
+
+    <div class="polls-list">
+        {% if past_polls %}
+            {% for poll in past_polls %}
+                <div class="poll-card">
+                    <div class="poll-header">
+                        <h2>{{ poll.Vote_Poll_Name }}</h2>
+                        <span class="poll-date">
+                            Started: {{ poll.Vote_Poll_Start|timezone:"America/Chicago"|date:"M d, Y g:i A" }}
+                        </span>
+                    </div>
+                    
+                    <div class="poll-results">
+                        <div class="vote-bar">
+                            {% with total=poll.Vote_Poll_Count_Yes|add:poll.Vote_Poll_Count_No %}
+                                {% if total > 0 %}
+                                    <div class="vote-display">
+                                        {% if poll.Vote_Poll_Count_Yes > 0 %}
+                                            <div class="aye-bar" style="flex-basis: {% widthratio poll.Vote_Poll_Count_Yes total 100 %}%">
+                                                {{ poll.Vote_Poll_Count_Yes }} Aye
+                                            </div>
+                                        {% endif %}
+                                        {% if poll.Vote_Poll_Count_No > 0 %}
+                                            <div class="nay-bar" style="flex-basis: {% widthratio poll.Vote_Poll_Count_No total 100 %}%">
+                                                {{ poll.Vote_Poll_Count_No }} Nay
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% else %}
+                                    <div class="no-votes">No votes recorded</div>
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+                        
+                        <div class="poll-footer">
+                            Ended: {{ poll.Vote_Poll_End|timezone:"America/Chicago"|date:"M d, Y g:i A" }} 
+                            Created by: {{ poll.created_by.username }}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-polls-message">
+                <p>No past polls available</p>
+            </div>
+        {% endif %}
+    </div>
+    {% endblock %}
+</div>

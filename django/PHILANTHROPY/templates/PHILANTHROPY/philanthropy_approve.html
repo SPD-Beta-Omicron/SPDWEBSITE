@@ -1,0 +1,62 @@
+{% extends 'HOME/main.html' %}
+{% load static %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="text-center mb-4">
+        <h2 class="homepage-heading">Philanthropy Approval</h2>
+    </div>
+    
+    <div class="profile-card">
+        {% if pending_requests %}
+            <div class="table-responsive">
+                <table class="table mb-0">
+                    <thead>
+                        <tr style="background-color: #1a1a1a; border-bottom: 2px solid rgb(196, 0, 0);">
+                            <th style="color: white; padding: 15px 20px; font-weight: normal;">BROTHER</th>
+                            <th style="color: white; padding: 15px 20px; font-weight: normal;">EVENT</th>
+                            <th style="color: white; padding: 15px 20px; font-weight: normal;">HOURS</th>
+                            <th style="color: white; padding: 15px 20px; font-weight: normal;">DATE</th>
+                            <th style="color: white; padding: 15px 20px; font-weight: normal;">ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for request in pending_requests %}
+                        <tr {% if forloop.counter|divisibleby:2 %}style="background-color: #f9f9f9;"{% endif %}>
+                            <td style="padding: 15px 20px;">{{ request.user.brother_profile.firstName }} {{ request.user.brother_profile.lastName }}</td>
+                            <td style="padding: 15px 20px;">{{ request.philanthropy_event_title }}</td>
+                            <td style="padding: 15px 20px;">{{ request.philanthropy_event_hours }}</td>
+                            <td style="padding: 15px 20px;">{{ request.philanthropy_event_date|date:"M d, Y" }}</td>
+                            <td style="padding: 15px 20px;">
+                                <form method="POST" class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="event_id" value="{{ request.id }}">
+                                    <button type="submit" name="action" value="approve" 
+                                        style="background-color: #28a745; color: white; border: none; border-radius: 4px; padding: 8px 16px; margin-right: 8px; font-size: 14px;">
+                                        Approve
+                                    </button>
+                                    <button type="submit" name="action" value="deny" 
+                                        style="background-color: #dc3545; color: white; border: none; border-radius: 4px; padding: 8px 16px; font-size: 14px;">
+                                        Deny
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-center" style="margin: 40px 0;">No pending requests to review.</p>
+        {% endif %}
+        
+        <div class="text-center" style="margin-top: 40px;">
+            <a href="{% url 'philanthropy_dashboard' %}" 
+               class="btn" 
+               style="background-color: rgb(196, 0, 0); color: white; padding: 15px 30px; font-weight: bold; border: none; border-radius: 8px; text-transform: uppercase; letter-spacing: 1px;">
+                BACK TO DASHBOARD
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends 'HOME/main.html' %}
+{% load static %}
+{% load philanthropy_extras %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="text-center mb-4">
+        <h2 class="homepage-heading">{{ brother.firstName }} {{ brother.lastName }}'s Philanthropy History</h2>
+        <p class="text-muted">Lifetime Total: {{ lifetime_total }} hours</p>
+    </div>
+    
+    <div class="dashboard-buttons mb-4">
+        <a href="{% url 'philanthropy_dashboard' %}" class="btn btn-primary">Back to Dashboard</a>
+    </div>
+
+    {% for ay in academic_year_totals %}
+    <div class="profile-card mb-4">
+        <h3 class="homepage-subheading">{{ ay.start }}–{{ ay.start|add:1 }} Academic Year</h3>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="text-muted mb-0">Total Hours: {{ ay.total_hours }}</h4>
+            <span class="badge badge {% if ay.total_hours >= 10 %}bg-success{% elif ay.total_hours >= 5 %}bg-warning{% else %}bg-critical{% endif %}">
+                {% if ay.total_hours >= 10 %}
+                    Requirement Met
+                {% else %}
+                    {{ 10|hours_remaining:ay.total_hours }} hours needed
+                {% endif %}
+            </span>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table">
+                <thead style="background-color: #1a1a1a;">
+                    <tr>
+                        <th style="color: white; padding: 15px 20px;">EVENT NAME</th>
+                        <th style="color: white; padding: 15px 20px;">HOURS</th>
+                        <th style="color: white; padding: 15px 20px;">DATE</th>
+                        {% if is_philanthropy_chair %}
+                        <th style="color: white; padding: 15px 20px;">ACTIONS</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for event in ay.events %}
+                    <tr {% if forloop.counter|divisibleby:2 %}style="background-color: #f9f9f9;"{% endif %}>
+                        <td style="padding: 15px 20px;">{{ event.philanthropy_event_title }}</td>
+                        <td style="padding: 15px 20px;">{{ event.philanthropy_event_hours }}{% if event.last_edited_at %} <span style="color: grey;">[EDITED]</span>{% endif %}</td>
+                        <td style="padding: 15px 20px;">{{ event.philanthropy_event_date|date:"M d, Y" }}</td>
+                        {% if is_philanthropy_chair %}
+                        <td style="padding: 15px 20px;">
+                            <a href="{% url 'philanthropy_edit_event' event_id=event.id %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% empty %}
+    <div class="profile-card">
+        <p class="text-center">No philanthropy hours recorded yet.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<style>
+.profile-card h3 {
+    color: var(--primary-red);
+    margin-bottom: 1.5rem;
+}
+
+.badge {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+</style>
+{% endblock %}

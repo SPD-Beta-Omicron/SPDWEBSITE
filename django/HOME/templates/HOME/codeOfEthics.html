@@ -1,0 +1,35 @@
+{% extends 'HOME/main.html' %}
+{% load static %}
+
+{% block content %}
+<div class="homepage-content">
+    <div class="text-center mb-4">
+        <h2 class="homepage-heading">Code of Ethics</h2>
+    </div>
+    
+    <div class="text-container mx-auto">
+        <p>
+            The Code of Ethics of Sigma Phi Delta is founded upon the basic principles of truth and honesty. 
+            The quotation, "Whatsoever things are true, whatsoever things are honest," should be the light guiding 
+            the footsteps of an Engineer towards service and success.
+        </p>
+        <p>
+            An Engineer should at all times be mentally, physically and morally clean, and should conduct himself as 
+            a gentleman. He should be courageous in following his own convictions, mentally awake to make use of every 
+            opportunity, and should consider the welfare of others before his own.
+        </p>
+        <p>
+            To his superiors, an Engineer should be dutiful; to his co-workers, helpful; to his subordinates, generous; 
+            to all men, brotherly. An Engineer should take a good grip on the joys of life. He should play the game like 
+            a man. He should fight against nothing so hard as his own weaknesses, and should endeavor to gain in strength. 
+            He should live so that his actions shall never besmirch his own honor, and thus maintain the honor of the 
+            Engineering Profession.
+        </p>
+        <a href="{% url 'dashboard' %}">
+            <div class="text-center mt-4">
+                <img src="{% static 'images/coatOfArms.webp' %}" alt="Coat of Arms" class="img-fluid" style="max-width: 150px;">
+            </div>
+        </a>
+    </div>
+</div>
+{% endblock %}

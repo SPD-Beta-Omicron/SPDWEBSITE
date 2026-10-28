@@ -1,0 +1,382 @@
+/* Previous CSS remains the same */
+
+/* Loading Animation */
+@keyframes button-loading-spinner {
+    from {
+        transform: rotate(0turn);
+    }
+    to {
+        transform: rotate(1turn);
+    }
+}
+
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    transition: all var(--transition-speed) ease;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: var(--primary-dark);
+    background-color: #f5f5f5;
+}
+
+/* Banner Styles */
+.banner {
+    position: relative;
+    width: 100%;
+    height: 75vh;
+    overflow: hidden;
+}
+
+.banner-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.1);
+    transition: transform 8s ease;
+}
+
+.banner:hover .banner-image {
+    transform: scale(1);
+}
+
+.banner-text {
+    position: absolute;
+    top: 1%; /* Changed from 50% to move text higher */
+    left: 50%;
+    transform: translate(-50%, 0); /* Removed vertical transform */
+    text-align: center;
+    color: var(--primary-light);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.4);
+    padding: 0.5rem 1.5rem;
+    border-radius: var(--border-radius);
+    backdrop-filter: blur(5px);
+    width: 80%; /* Added width control */
+    max-width: 800px; /* Added maximum width */
+}
+
+
+.banner-text h1 {
+    font-size: 4rem;
+    font-family: 'Times New Roman', serif;
+    margin: 0;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 1s forwards;
+}
+
+.banner-text p {
+    font-size: 1.8rem;
+    margin: 15px 0 0;
+    font-family: Arial, sans-serif;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 1s forwards 0.5s;
+}
+
+/* Homepage Content */
+.homepage-content {
+    padding: 3rem;
+    background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+}
+
+.homepage-heading {
+    text-align: center;
+    font-family: 'Times New Roman', serif;
+    font-size: 2.5rem;
+    color: var(--primary-red);
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.homepage-heading::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    height: 3px;
+    background: var(--primary-red);
+}
+
+.homepage-subheading {
+    text-align: center;
+    font-family: 'Times New Roman', serif;
+    font-size: 2rem;
+    color: var(--primary-red);
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+/* Text Container Styles for Code of Ethics and Rush page*/
+.text-container {
+    max-width: 800px;
+    background-color: #ffffff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 2rem;
+    margin: 0 auto;
+    line-height: 1.8;
+    color: #333;
+    font-size: 1rem;
+    font-family: Arial, sans-serif;
+}
+
+.text-container p {
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.text-container img {
+    margin-top: 1rem;
+}
+
+.messages .alert {
+    background-color: #fee2e2;
+    border: 1px solid #dc2626;
+    color: #991b1b;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 4px;
+}
+
+.image-cropped {
+    width: 100%;
+    height: 500px;
+    object-fit: cover;
+}
+
+
+/* Dropdown Section Container */
+.dropdown-section {
+    margin: 2rem auto;
+    text-align: center;
+  }
+  
+/* Initially hide the content by setting max-height to 0 and removing vertical padding */
+.dropdown-content {
+    max-height: 0;
+    overflow: hidden;
+    padding: 0 2rem;  /* keep horizontal padding if desired */
+    transition: max-height 0.25s ease-out, padding 0.25s ease-out;
+    transition: max-height 0.25s ease-in, padding 0.25s ease-in;
+
+  }
+  
+  /* When activated, allow the container to expand and restore vertical padding */
+  .dropdown-content.show {
+    max-height: 1000px; /* ensure this is higher than your content's height */
+    padding: 2rem;      /* adjust according to your design */
+  }
+
+/* Extra wide button style */
+.wide-dropdown-toggle {
+    width: 100%;         /* makes the button span the full width of its container */
+    max-width: 800px;    /* adjust this value as needed */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 1rem 2rem;  /* adjust the padding to your design */
+  }
+  
+/* Initial arrow pointing right */
+.dropdown-arrow {
+    display: inline-block;
+    margin-left: 10px;
+    transform: rotate(0deg); /* Right-facing arrow */
+    transition: transform 0.5s ease-out;
+}
+
+/* When dropdown is open, rotate the arrow downward */
+.wide-dropdown-toggle.open .dropdown-arrow {
+    transform: rotate(90deg); /* Down-facing arrow */
+}
+
+  
+  .dropdown-toggle::after {
+    display: none; /* Hides any auto-generated arrow from Bootstrap */
+}
+
+  
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-red);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #8b0000;
+}
+
+/* Common Button Stylings */
+.btn-primary {
+    background: linear-gradient(135deg, #c40000 0%, #8b0000 100%);
+    color:white;
+    box-shadow: 0 4px 15px rgba(196, 0, 0, 0.2);
+    border: none;
+    border-radius: 12px;
+    display: inline-flex; /* Makes the button a flex container */
+    align-items: center;  /* Centers items vertically */
+}
+
+.btn-primary:hover {
+    box-shadow: 0 8px 25px rgba(196, 0, 0, 0.3);
+    background: linear-gradient(135deg, #d10000 0%, #a50000 100%);
+}
+
+/* Active/Click Effect */
+.btn-primary:active {
+    box-shadow: 0 2px 10px rgba(196, 0, 0, 0.2);
+}
+
+/* Button Ripple Effect */
+.btn-primary::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.1); /* Reduced opacity for subtlety */
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease-out, height 0.6s ease-out, opacity 0.6s ease-out;
+}
+
+.btn-primary:hover::after {
+    width: 300px;
+    height: 300px;
+    opacity: 0; /* Fades out ripple instead of causing a flash */
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(196, 0, 0, 0.3);
+    background: linear-gradient(135deg, #d10000 0%, #a50000 100%);
+}
+
+/* Active/Click Effect */
+.btn-primary:active {
+    transform: translateY(1px) scale(0.98);
+    box-shadow: 0 2px 10px rgba(196, 0, 0, 0.2);
+}
+
+/* Button Ripple Effect */
+.btn-primary::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.1); /* Reduced opacity for subtlety */
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease-out, height 0.6s ease-out, opacity 0.6s ease-out;
+}
+
+.btn-primary:hover::after {
+    width: 300px;
+    height: 300px;
+    opacity: 0; /* Fades out ripple instead of causing a flash */
+}
+
+.btn-secondary {
+    background: #2e2e2e;
+    box-shadow: 0 4px 15px rgba(196, 0, 0, 0.2);
+    border: none;
+    border-radius: 12px;
+    display: inline-flex; /* Makes the button a flex container */
+    align-items: center;  /* Centers items vertically */
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-around;  /* You can adjust this as needed */
+    gap: 10px;  /* Adds space between the buttons */
+    margin-top: 20px;
+    vertical-align: middle;
+}
+
+.button-container a {
+    text-decoration: none;  /* Ensures the links don't have underlines */
+}
+
+.instagram-posts {
+    max-width: 100%; /* Makes the image scale with the screen */
+    height: auto;
+    display: block;
+    border-radius: 10px; /* Round all corners */
+    padding: 8px; /* Space for border */
+    margin: 0 auto; /* Ensures it's centered */
+    background: linear-gradient(45deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5); /* Instagram gradient */
+}
+.instagram-text-container {
+    max-width: 800px;
+    background-color: #ffffff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 2rem;
+    margin: 0 auto;
+    line-height: 1.8;
+    color: #dc2626; /* Change text color to red */
+    font-size: 1rem;
+    font-family: Arial, sans-serif;
+    text-align: center; /* Center the text */
+}
+
+.instagram-subheading {
+    margin-bottom: 5px; /* Reduce space between text and image */
+    font-family: 'Times New Roman';
+    font-size: 1.8rem; /* Large text for visibility */
+    font-weight: bold;
+    color: #dc2626; /* Change subheading color to red */
+    text-align: center; /* Center the subheading text */
+}
+
+
+.instagram-button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 0; /* Remove extra space above the image */
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+    .instagram-subheading {
+        font-size: 1.5rem; /* Slightly smaller for mobile */
+    }
+
+    .instagram-posts {
+        width: 90%; /* Slightly smaller image for better fit */
+    }
+}

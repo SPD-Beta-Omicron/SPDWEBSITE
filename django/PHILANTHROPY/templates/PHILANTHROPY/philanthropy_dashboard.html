@@ -1,0 +1,171 @@
+{% extends 'HOME/main.html' %}
+
+{% load static %}
+{% load philanthropy_extras %}
+
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<link rel="stylesheet" href="{% static 'PHILANTHROPY/philanthropy_dashboard.css' %}" />
+
+<div class="profile-container">
+    
+    <!-- Previous semester selection and buttons remain the same -->
+    <div class="text-center mb-4">
+        <h2 class="homepage-heading">Philanthropy Dashboard</h2>
+        
+        <div class="semester-selector mb-3">
+            <h3 class="homepage-subheading">{{ year_label }}</h3>
+            <div class="semester-dropdown">
+                <select class="form-select semester-select" onchange="window.location.href=this.value">
+                    {% for y in available_years %}
+                        <option value="?year={{ y }}"
+                            {% if y == selected_year %}selected{% endif %}>
+                            {{ y }}–{{ y|add:1 }} Academic Year
+                            {% if y == selected_year %}(Current){% endif %}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+    
+    <div class="dashboard-buttons mb-4">
+        <a href="{% url 'philanthropy_request' %}" class="btn btn-primary me-2">Philanthropy Request</a>
+        <a href="{% url 'philanthropy_approve' %}" class="btn btn-primary">Review Pending Hours</a>
+    </div>
+
+    <!-- Your Progress Card with collapsible events -->
+    <div class="profile-card mb-4">
+        <div class="text-center mb-3">
+            <h2 class="homepage-heading">Your Progress</h2>
+        </div>
+
+        <div class="progress-container d-flex align-items-center p-3" style="background: #f8f9fa; border-radius: 8px;">
+            <div class="progress-label text-white text-center p-3" style="background: #1a1a1a; border-radius: 8px; width: 150px;">
+                <strong>YOUR TOTAL HOURS</strong>
+            </div>
+            <div class="progress-value ms-4" style="font-size: 24px; color: #c40000; font-weight: bold; width: 60%;">
+                {{ user_total_hours|floatformat:1 }} / 10.0 hours
+            </div>
+        </div>
+
+        <!-- Collapsible Events Section -->
+        <div class="mt-4">
+            <div class="accordion" id="eventsAccordion">
+                <div class="accordion-item border-0">
+                    <h2 class="accordion-header" id="eventsHeading">
+                        <button class="accordion-button collapsed custom-accordion-btn" type="button" 
+                                data-bs-toggle="collapse" data-bs-target="#eventsCollapse" 
+                                aria-expanded="false" aria-controls="eventsCollapse">
+                            <span class="text-center">Your Submitted Events</span>
+                        </button>
+                    </h2>
+                    <div id="eventsCollapse" class="accordion-collapse collapse" 
+                         aria-labelledby="eventsHeading" data-bs-parent="#eventsAccordion">
+                        <div class="accordion-body p-0 mt-3">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Event Name</th>
+                                            <th>Hours</th>
+                                            <th>Date</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for event in user_events %}
+                                        <tr>
+                                            <td data-label="Event Name">{{ event.philanthropy_event_title }}</td>
+                                            <td data-label="Hours">{{ event.philanthropy_event_hours }}</td>
+                                            <td data-label="Date">{{ event.philanthropy_event_date|date:"M d, Y" }}</td>
+                                            <td data-label="Status">
+                                                <span class="badge {% if event.philanthropy_approval_status == 'approved' %}bg-success{% else %}bg-warning{% endif %}">
+                                                    {{ event.philanthropy_approval_status }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="4" class="text-center">No events submitted for this academic year.</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chapter Progress Overview -->
+    <div class="profile-card mb-4">
+        <h2 class="homepage-subheading">Chapter Progress - {{ year_label }}</h2>
+        <div class="centered-table">
+            <table class="table keep-structure">
+                <tbody>
+                    <tr>
+                        <th>Brothers Meeting 10 Hour Goal</th>
+                        <td data-label="Brothers Meeting Goal">{{ members_meeting_goal }} / {{ total_active_members }}</td>
+                    </tr>
+                    <tr>
+                        <th>Average Hours per Brother</th>
+                        <td data-label="Average Hours">{{ avg_hours_per_brother|floatformat:1 }} / 10.0 hours</td>
+                    </tr>
+                    <tr>
+                        <th>Total Chapter Hours</th>
+                        <td data-label="Total Hours">{{ total_chapter_hours|default:"0" }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Brotherhood Progress -->
+    <div class="profile-card mb-4">
+        <h2 class="homepage-subheading">Brotherhood Progress</h2>
+        <div class="centered-table">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Brother</th>
+                        <th>Total Hours</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for brother in brothers_progress %}
+                    <tr>
+                        <td data-label="Brother">
+                            <a href="{% url 'brother_philanthropy_history' brother.user.id %}" 
+                               class="brother-link">
+                                {{ brother.full_name }}
+                            </a>
+                        </td>
+                        <td data-label="Total Hours">{{ brother.total_hours|floatformat:1 }}</td>
+                        <td data-label="Status">
+                            <span class="badge {% if brother.total_hours >= 10 %}bg-success{% elif brother.total_hours >= 5 %}bg-warning{% else %}bg-critical{% endif %}">
+                                {% if brother.total_hours >= 10 %}
+                                    Complete
+                                {% else %}
+                                    {{ 10|hours_remaining:brother.total_hours|floatformat:1 }} hours remaining
+                                {% endif %}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="dashboard-buttons d-flex justify-content-center gap-3 mb-4">
+        <a href="{% url 'export_philanthropy_hours' %}" class="btn btn-primary">Export Hours</a>
+    </div>
+
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,228 @@
+  
+  .events-collapse-btn {
+        width: 100%;
+        background: none;
+        border: none;
+        padding: 1rem;
+        text-align: left;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-radius: 8px;
+        transition: background-color 0.2s ease;
+    }
+    
+    .events-collapse-btn:hover {
+        background-color: rgba(196, 0, 0, 0.05);
+    }
+    
+    .events-collapse-btn:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(196, 0, 0, 0.2);
+    }
+    
+    .collapse-icon {
+        font-size: 0.8em;
+        transition: transform 0.3s ease;
+        display: inline-block;
+        margin-left: 0.5rem;
+    }
+    
+    .events-collapse-btn[aria-expanded="true"] .collapse-icon {
+        transform: rotate(180deg);
+    }
+    
+    /* Responsive styles */
+    @media (max-width: 768px) {
+        .semester-dropdown {
+            max-width: 100%;
+            padding: 0 1rem;
+        }
+        
+        .semester-select {
+            font-size: 0.9rem;
+            padding: 0.5rem 2rem 0.5rem 0.5rem;
+        }
+    
+        .progress-container {
+            text-align: center;
+        }
+    
+        .progress-label {
+            width: 100%;
+        }
+    
+        .dashboard-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+    
+        .dashboard-buttons .btn {
+            width: 100%;
+            margin: 0;
+        }
+    
+        .events-collapse-btn h2 {
+            font-size: 1.25rem;
+        }
+    }
+    
+    /* Animation for collapse */
+    .collapse {
+        transition: height 0.3s ease;
+    }
+.semester-dropdown {
+    max-width: 350px;
+    margin: 0 auto;
+}
+
+.semester-select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid var(--primary-red);
+    border-radius: 8px;
+    font-size: 1rem;
+    color: var(--primary-dark);
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='%23c40000' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 16px;
+    padding-right: 2.5rem;
+}
+
+.brother-link {
+    color: inherit;
+    text-decoration: none;
+    display: block;
+    transition: color 0.2s ease;
+}
+
+.brother-link:hover {
+    color: var(--primary-red);
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .semester-dropdown {
+        max-width: 100%;
+        padding: 0 1rem;
+    }
+    
+    .semester-select {
+        font-size: 0.9rem;
+        padding: 0.5rem 2rem 0.5rem 0.5rem;
+    }
+}
+    .progress-container {
+        text-align: center;
+    }
+
+    .progress-label {
+        width: 100%;
+    }
+
+    .dashboard-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .dashboard-buttons .btn {
+        width: 100%;
+        margin: 0;
+    }
+
+    .accordion-button {
+        padding: 1rem;
+        background: none;
+        box-shadow: none !important;
+    }
+    
+    .accordion-button:not(.collapsed) {
+        background: none;
+        color: inherit;
+    }
+    
+    .accordion-button::after {
+        background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='%23c40000' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/></svg>");
+        transition: transform 0.2s ease;
+    }
+    
+    .accordion-button:not(.collapsed)::after {
+        background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='%23c40000' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/></svg>");
+    }
+    
+    .accordion-item {
+        background: none;
+    }
+    
+    .accordion-button:hover {
+        background-color: rgba(185, 9, 9, 0.709);
+    }
+    
+    @media (max-width: 768px) {
+        .accordion-button span {
+            font-size: 1.1rem;
+        }
+    }
+
+    /* Custom Accordion Button Styles */
+/* Custom Accordion Button Styles */
+.custom-accordion-btn {
+    background-color: #1a1a1a !important;
+    color: white !important;
+    padding: 0.75rem 2rem !important;
+    border-radius: 8px !important;
+    width: auto !important;
+    margin: 0 auto;
+    border: none !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.2s ease !important;
+    max-width: 300px;
+    display: flex !important;
+    justify-content: center !important;
+}
+
+.custom-accordion-btn span {
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 1.5rem;
+}
+
+.custom-accordion-btn:hover {
+    background-color: #2d2d2d !important;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15) !important;
+}
+
+.custom-accordion-btn::after {
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='white' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/></svg>") !important;
+    margin-left: auto;
+}
+
+.custom-accordion-btn:not(.collapsed)::after {
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='white' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/></svg>") !important;
+}
+
+.accordion-item {
+    background: none;
+}
+
+@media (max-width: 768px) {
+    .custom-accordion-btn {
+        padding: 0.5rem 1.5rem !important;
+    }
+    
+    .custom-accordion-btn span {
+        font-size: 1rem;
+    }
+}

@@ -1,0 +1,42 @@
+{% load static %}
+
+{% if show_alert %}
+<button id="clockButton" onclick="toggleAlert()" 
+    style="border-radius: 50%; background: none; border: none; padding: 0; cursor: pointer;">
+    <img src="{% static 'images/clock.webp' %}" alt="DST Alert" 
+         style="width: 90px; height: 90px; display: block; aspect-ratio: 1/1;">
+</button>
+
+<div id="overlay"></div>
+
+<div id="alert" class="alert-popup">
+    <p class="text-sm text-yellow-700">{{ message|safe }}</p>
+    <button onclick="toggleAlert()" class="mt-2 p-2 bg-yellow-500 text-black rounded-lg">Close</button>
+</div>
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/dls_button.css' %}">
+
+<script>
+function toggleAlert() {
+    const alert = document.getElementById('alert');
+    const overlay = document.getElementById('overlay');
+    const isShowing = alert.classList.contains('show');
+
+    if (isShowing) {
+        alert.classList.remove('show');
+        overlay.classList.remove('show');
+        setTimeout(() => {
+            alert.style.display = 'none';
+            overlay.style.display = 'none';
+        }, 300);
+    } else {
+        alert.style.display = 'block';
+        overlay.style.display = 'block';
+        requestAnimationFrame(() => {
+            alert.classList.add('show');
+            overlay.classList.add('show');
+        });
+    }
+}
+</script>
+{% endif %}

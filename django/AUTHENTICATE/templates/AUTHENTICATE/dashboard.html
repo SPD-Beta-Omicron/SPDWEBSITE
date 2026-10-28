@@ -1,0 +1,36 @@
+{% extends 'HOME/main.html' %}
+
+<!-- Day Light Savings Notifier -->
+{% load dls_tags %}
+
+{% block content %}
+
+<!-- Announcement Alert Notifier -->
+{% include 'MISC/announcement_alert.html' %}
+
+<div class="d-grid gap-2 col-3 mx-auto dashboard-buttons">
+    {% if dashboard_links %}
+        {% for link in dashboard_links %}
+            <a href="{{ link.link }}" target="_blank">
+                <button class="btn btn-primary" type="button">{{ link.text }}</button>
+            </a>
+        {% endfor %}
+    {% endif %}
+    <a href="{% url 'philanthropy_dashboard' %}">
+        <button class="btn btn-primary" type="button">Philanthropy</button>
+    </a>
+    <a href="{% url 'poll' %}">
+        <button class="btn btn-primary" type="button">Parley Pro</button>
+    </a>
+    <a href="{% url 'roster' %}">
+        <button class="btn btn-primary" type="button">Roster</button>
+    </a>
+    <a href="{% url 'alumni_roster' %}">
+        <button class="btn btn-primary" type="button">Alumni Roster</button>
+    </a>
+    <a href= "{% url 'newmember_marks_dashboard'%}">
+        <button class="btn btn-primary" type="button">New Member Marks</button>
+    </a>
+    {% dls_alert %}
+</div>
+{% endblock %}

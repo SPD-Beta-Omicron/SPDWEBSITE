@@ -1,0 +1,27 @@
+{% extends 'HOME/main.html' %}
+{% load static %}
+<!-- Day Light Savings Notifier -->
+{% load dls_tags %}
+
+{% block content %}
+
+
+<div class="d-grid gap-2 col-3 mx-auto dashboard-buttons">
+
+    <a href="https://sigmaphidelta.org/" target="_blank">
+        <button class="btn btn-primary" type="button">National Website</button>
+    </a>
+    <a href="{% url 'newmember_marks_dashboard' %}">
+        <button class="btn btn-primary" type="button">New Member Marks</button>
+    </a>
+    <a href="{% url 'roster' %}">
+        <button class="btn btn-primary" type="button">Roster</button>
+    </a>
+    <a href="{% url 'alumni_roster' %}">
+        <button class="btn btn-primary" type="button">Alumni Roster</button>
+    </a>
+
+
+
+  </div>
+{% endblock %}

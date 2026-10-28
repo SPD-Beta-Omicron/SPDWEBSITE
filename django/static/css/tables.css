@@ -1,0 +1,189 @@
+/* Table Styles */
+.centered-table {
+    display: flex;
+    justify-content: center;
+    margin: 1.5rem auto;
+    width: 100%;
+    max-width: 1200px;
+    padding: 0 1rem;
+}
+
+.centered-table .card {
+    width: 100%;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.centered-table .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.centered-table .card-body {
+    padding: 1.5rem;
+    background-color: var(--primary-light);
+}
+
+.table {
+    margin: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    background: white;
+}
+
+/* Modern Header Style */
+.table thead {
+    border-bottom: 2px solid var(--primary-red);
+}
+
+.table th {
+    background-color: #1a1a1a;
+    color: var(--primary-light);
+    font-size: 0.875rem;
+    padding: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: center;  /* Changed from left to center */
+    white-space: nowrap;
+}
+
+.table td {
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid #eee;
+    color: #333;
+    font-size: 0.9rem;
+    text-align: center;  /* Added to center align cell content */
+}
+
+/* Responsive table wrapper */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -1rem;
+    padding: 0 1rem;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+.table-responsive::-webkit-scrollbar {
+    height: 6px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    .centered-table {
+        padding: 0 0.5rem;
+        margin: 1rem auto;
+    }
+
+    .table th,
+    .table td {
+        padding: 0.75rem;
+        font-size: 0.875rem;
+    }
+
+    /* Stack table on mobile for better readability */
+    .table:not(.keep-structure) {
+        display: block;
+    }
+
+    .table:not(.keep-structure) thead,
+    .table:not(.keep-structure) tbody,
+    .table:not(.keep-structure) tr {
+        display: block;
+        width: 100%;
+    }
+
+    .table:not(.keep-structure) th {
+        display: none; /* Hide headers on mobile */
+    }
+
+    .table:not(.keep-structure) td {
+        display: flex;
+        padding: 0.5rem 0.75rem;
+        align-items: center;
+        border: none;
+        justify-content: space-between; /* Changed to spread content */
+        text-align: right; /* Align the value to the right */
+    }
+
+    .table:not(.keep-structure) td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        text-align: left; /* Keep label left-aligned */
+        margin-right: 1rem;
+    }
+
+    /* Keep certain tables in their original structure if needed */
+    .table.keep-structure th,
+    .table.keep-structure td {
+        white-space: nowrap;
+        min-width: 120px;
+        text-align: center;
+    }
+}
+
+/* Hover effects */
+.table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Alternate row colors */
+.table tbody tr:nth-child(even) {
+    background-color: #fafafa;
+}
+
+/* Status badges */
+.badge {
+    padding: 0.35em 0.65em;
+    font-size: 0.75em;
+    font-weight: 600;
+    border-radius: 4px;
+    text-transform: capitalize;
+    display: inline-block;
+}
+
+.bg-success {
+    background-color: #10b981;
+    color: white;
+}
+
+.bg-warning {
+    background-color: #f59e0b;
+    color: white;
+}
+
+.bg-critical {
+    background-color: #dc2626;
+    color: white;
+}
+
+.member-photo {
+  width: 60px;
+}
+
+.roster-profile-img {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary-red);
+}

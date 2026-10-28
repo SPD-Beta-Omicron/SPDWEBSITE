@@ -1,0 +1,123 @@
+{% extends 'HOME/main.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    .exec-card {
+        margin-bottom: 30px;
+        transition: transform 0.3s;
+        height: 100%;
+    }
+    
+    .exec-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    
+    .exec-profile-img {
+        width: 160px;
+        height: 160px;
+        object-fit: cover;
+        border: 3px solid #A41E1E;
+        border-radius: 50%;
+        margin: 0 auto 15px;
+    }
+    
+    .card-title {
+        color: #A41E1E;
+        font-weight: 600;
+    }
+    
+    .position-title {
+        font-weight: 500;
+        margin-bottom: 15px;
+    }
+    
+    .bio-info {
+        font-size: 0.9rem;
+    }
+    
+    .section-heading {
+        color: #A41E1E;
+        position: relative;
+        padding-bottom: 15px;
+        margin-bottom: 30px;
+    }
+    
+    .section-heading:after {
+        content: '';
+        position: absolute;
+        width: 80px;
+        height: 3px;
+        background-color: #A41E1E;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    
+    .brother-email {
+        margin-top: 15px;
+        font-size: 0.85rem;
+    }
+    
+    .brother-email a {
+        color: #A41E1E;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    
+    .brother-email a:hover {
+        color: #7a1616;
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center section-heading">Executive Board</h1>
+    
+    {% if exec_board_brothers %}
+    <div class="row">
+        {% for position, brother in exec_board_brothers %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card exec-card shadow">
+                <div class="card-body text-center">
+                    <img src="{% if brother.profileImage %}{{ brother.profileImage.url }}{% else %}{% static 'images/default_profile.png' %}{% endif %}" 
+                         alt="{{ brother.firstName }} {{ brother.lastName }}" 
+                         class="exec-profile-img"
+                         onerror="this.src='{% static "images/default_profile.png" %}'">
+                    
+                    <h4 class="card-title">{{ brother.firstName }} {{ brother.lastName }}</h4>
+                    
+                    <h5 class="position-title">{{ position }}</h5>
+                    
+                    <div class="bio-info">
+                        {% if brother.majors.all %}
+                            <p><strong>Major{% if brother.majors.all.count > 1 %}s{% endif %}:</strong> 
+                                {% for major in brother.majors.all %}
+                                    {{ major.name }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </p>
+                        {% endif %}
+                        
+                        {% if brother.user and brother.user.email %}
+                            <div class="brother-email">
+                                <a href="mailto:{{ brother.user.email }}">
+                                    <i class="fas fa-envelope"></i> {{ brother.user.email }}
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center">
+        No Executive Board members found.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

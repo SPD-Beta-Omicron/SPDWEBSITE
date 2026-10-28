@@ -1,0 +1,550 @@
+{% extends 'HOME/main.html' %}
+{% load static %}
+
+{% block content %}
+<div class="profile-container">
+    <div id="alert-container" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1000;"></div>
+    <div class="profile-card">
+        <!-- Profile Photo Section -->
+        <div class="profile-photo">
+            <img src="{% if brother_profile.profileImage %}{{ brother_profile.profileImage.url }}{% else %}{% static 'images/default_profile.png' %}{% endif %}" 
+                 alt="Profile Photo" 
+                 class="profile-img"
+                 onerror="this.src='{% static 'images/default_profile.png' %}'">
+            <form id="photoForm" action="{% url 'update_photo' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="file" name="profile_photo" id="profile_photo" class="hidden-input" accept="image/*">
+            </form>
+        </div>
+
+        <!-- Profile Information Section -->
+        <div class="profile-info">
+            <h2>Profile Information</h2>
+            <form action="{% url 'update_profile' %}" method="POST" class="profile-form">
+                {% csrf_token %}
+                <table class="profile-table">
+                    <tbody>
+                        <tr>
+                            <th>Username</th>
+                            <td><input type="text" name="username" value="{{ brother_profile.user.username }}" class="profile-input" readonly></td>
+                        </tr>
+                        <tr>
+                            <th>First Name</th>
+                            <td><input type="text" name="firstName" value="{{ brother_profile.firstName }}" class="profile-input" readonly></td>
+                        </tr>
+                        <tr>
+                            <th>Last Name</th>
+                            <td><input type="text" name="lastName" value="{{ brother_profile.lastName }}" class="profile-input" readonly></td>
+                        </tr>
+                        <tr>
+                            <th>Hometown</th>
+                            <td><input type="text" name="hometown" value="{{ brother_profile.hometown|default:'' }}" class="profile-input" readonly></td>
+                        </tr>
+                        <tr>
+                            <th>Email</th>
+                            <td><input type="email" name="email" value="{{ brother_profile.user.email }}" class="profile-input" readonly></td>
+                        </tr>
+                        <tr>
+                            <th>Major</th>
+                            <td>
+                                <div class="major-display-container {% if not brother_profile.majors.all %}no-majors{% endif %}">
+                                    <p class="majors-display">
+                                        {% for major in brother_profile.majors.all %}
+                                            <span>{{ major.name }}</span>
+                                        {% endfor %}
+                                    </p>
+                                    <button type="button" class="add-major-btn" data-toggle="modal" data-target="#majorModal">
+                                        <i class="fas fa-plus"></i> Major
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <input type="hidden" name="pclass" value="{{ brother_profile.pclass|default:'' }}">
+                <div class="form-actions" style="display: none;">
+                    <button type="submit" class="save-btn">Save Changes</button>
+                    <button type="button" class="password-btn" data-toggle="modal" data-target="#changePasswordModal">Change Password</button>
+                    <button type="button" class="cancel-btn">Cancel</button>
+                </div>
+            </form>
+            <div class="button-container">
+                <button type="button" id="editToggle" class="edit-toggle-btn">Edit Profile</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Password Change Modal -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="passwordModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="passwordModalLabel">Change Password</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="passwordForm">
+                    <div class="form-group">
+                        <label for="currentPassword">Current Password</label>
+                        <input type="password" class="form-control" id="currentPassword" required>
+                        <small class="text-danger" id="currentPasswordError"></small>
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <input type="password" class="form-control" id="newPassword" required>
+                        <small class="text-danger" id="newPasswordError"></small>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm New Password</label>
+                        <input type="password" class="form-control" id="confirmPassword" required>
+                        <small class="text-danger" id="confirmPasswordError"></small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="savePassword">Save Password</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Major Selection Modal -->
+<div class="modal fade" id="majorModal" tabindex="-1" role="dialog" aria-labelledby="majorModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="majorModalLabel">Select Major(s)</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="major-limit-text">Select up to 2 majors</p>
+                <!-- Major options template -->
+                <div class="major-options">
+                    {% for major in available_majors %}
+                    <div class="major-option" onclick="handleMajorClick(this, event)">
+                        <input type="checkbox" 
+                               id="major_{{ major.id }}" 
+                               class="major-checkbox" 
+                               value="{{ major.name }}"
+                               {% if major in brother_profile.majors.all %}checked{% endif %}>
+                        <label for="major_{{ major.id }}">{{ major.name }}</label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary save-majors">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add new modal after existing major modal -->
+<div class="modal fade" id="otherMajorModal" tabindex="-1" role="dialog" aria-labelledby="otherMajorModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="otherMajorModalLabel">Enter Major Name</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <input type="text" class="form-control" id="customMajorInput" placeholder="Enter major name">
+                    <small class="form-text text-muted">Please enter the full name of your major</small>
+                    <div id="majorValidationError" class="text-danger mt-2" style="display: none;">
+                        Major name contains inappropriate language.
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveCustomMajor">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add jQuery if not present -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const maxSelections = 2;
+        const checkboxes = document.querySelectorAll('.major-checkbox');
+        const saveMajorsBtn = document.querySelector('.save-majors');
+
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const checkedBoxes = document.querySelectorAll('.major-checkbox:checked');
+                if (checkedBoxes.length > maxSelections) {
+                    this.checked = false;
+                }
+            });
+        });
+
+        saveMajorsBtn.addEventListener('click', function() {
+            const selectedMajors = Array.from(document.querySelectorAll('.major-checkbox:checked'))
+                .map(checkbox => checkbox.value);
+
+            fetch('{% url "update_majors" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify({
+                    majors: selectedMajors
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const majorsDisplay = document.querySelector('.majors-display');
+                    majorsDisplay.textContent = selectedMajors.join(', ');
+                    $('#majorModal').modal('hide');
+                }
+            });
+        });
+
+        document.getElementById('saveCustomMajor')?.addEventListener('click', function() {
+            const customMajorInput = document.getElementById('customMajorInput');
+            const validationError = document.getElementById('majorValidationError');
+            const majorName = customMajorInput.value.trim();
+
+            if (!majorName) {
+                validationError.textContent = 'Please enter a major name';
+                validationError.style.display = 'block';
+                return;
+            }
+
+            fetch('{% url "add_custom_major" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify({
+                    major_name: majorName
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const majorOptions = document.querySelector('.major-options');
+                    const newOption = document.createElement('div');
+                    newOption.className = 'major-option';
+                    newOption.innerHTML = `
+                        <input type="checkbox" 
+                               id="${data.major_id}" 
+                               class="major-checkbox" 
+                               value="${data.major_name}"
+                               checked>
+                        <label for="${data.major_id}">${data.major_name}</label>
+                    `;
+                    majorOptions.insertBefore(newOption, majorOptions.lastElementChild);
+                    $('#otherMajorModal').modal('hide');
+                    validationError.style.display = 'none';
+                } else {
+                    validationError.textContent = data.message;
+                    validationError.style.display = 'block';
+                }
+            });
+        });
+
+        // Clear validation on modal close
+        $('#otherMajorModal').on('hidden.bs.modal', function () {
+            document.getElementById('customMajorInput').value = '';
+            document.getElementById('majorValidationError').style.display = 'none';
+        });
+
+        // Add click handler to major options
+        document.querySelectorAll('.major-option').forEach(option => {
+            option.addEventListener('click', function(e) {
+                // Prevent double-firing when clicking checkbox directly
+                if (e.target.type !== 'checkbox') {
+                    const checkbox = this.querySelector('input[type="checkbox"]');
+                    checkbox.checked = !checkbox.checked;
+                }
+            });
+        });
+
+        document.querySelectorAll('.major-option').forEach(option => {
+            option.addEventListener('click', function(e) {
+                const checkbox = this.querySelector('input[type="checkbox"]');
+                const checkedBoxes = document.querySelectorAll('.major-checkbox:checked');
+
+                if (!checkbox.checked && checkedBoxes.length >= maxSelections) {
+                    return;
+                }
+
+                checkbox.checked = !checkbox.checked;
+
+                // Trigger change event
+                const event = new Event('change');
+                checkbox.dispatchEvent(event);
+            });
+        });
+
+        document.getElementById('editToggle').addEventListener('click', function() {
+            const inputs = document.querySelectorAll('.profile-input');
+            const formActions = document.querySelector('.form-actions');
+            
+            inputs.forEach(input => {
+                input.readOnly = false;
+                input.dataset.originalValue = input.value;
+            });
+            
+            formActions.style.display = 'flex';
+            this.style.display = 'none';
+        });
+    });
+    
+    document.getElementById('editToggle').addEventListener('click', function() {
+        const inputs = document.querySelectorAll('.profile-input');
+        const formActions = document.querySelector('.form-actions');
+        const editButton = document.getElementById('editToggle');
+        
+        inputs.forEach(input => {
+            input.dataset.originalValue = input.value;
+            input.readOnly = false;
+        });
+        formActions.style.display = 'flex';
+        editButton.style.display = 'none';
+    });
+    
+    document.querySelector('.cancel-btn').addEventListener('click', function() {
+        const inputs = document.querySelectorAll('.profile-input');
+        const formActions = document.querySelector('.form-actions');
+        const editButton = document.getElementById('editToggle');
+        
+        inputs.forEach(input => {
+            input.value = input.dataset.originalValue;
+            input.readOnly = true;
+        });
+        
+        formActions.style.display = 'none';
+        editButton.style.display = 'block';
+    });
+    
+    document.getElementById('savePassword').addEventListener('click', function() {
+        document.querySelectorAll('.text-danger').forEach(el => el.textContent = '');
+        
+        const currentPassword = document.getElementById('currentPassword').value;
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        
+        let hasError = false;
+        
+        if (!currentPassword) {
+            document.getElementById('currentPasswordError').textContent = 'Current password is required';
+            hasError = true;
+        }
+        
+        if (!newPassword) {
+            document.getElementById('newPasswordError').textContent = 'New password is required';
+            hasError = true;
+        }
+        
+        if (!confirmPassword) {
+            document.getElementById('confirmPasswordError').textContent = 'Please confirm your new password';
+            hasError = true;
+        }
+        
+        if (newPassword !== confirmPassword) {
+            document.getElementById('confirmPasswordError').textContent = 'Passwords do not match';
+            hasError = true;
+        }
+        
+        if (hasError) return;
+    
+        fetch('{% url "change-password" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({
+                current_password: currentPassword.trim(),
+                new_password1: newPassword.trim(),
+                new_password2: confirmPassword.trim()
+            })
+        })
+        .then(response => response.json())
+        // Password change success handler
+        .then(data => {
+            if (data.success) {
+                $('#changePasswordModal').modal('hide');
+                document.getElementById('passwordForm').reset();
+                
+                const formActions = document.querySelector('.form-actions');
+                const editButton = document.getElementById('editToggle');
+                const inputs = document.querySelectorAll('.profile-input');
+                
+                inputs.forEach(input => input.readOnly = true);
+                formActions.style.display = 'none';
+                editButton.style.display = 'block';
+                showTemporaryAlert('Password changed successfully!');
+                window.scrollTo({top: 0, behavior: 'smooth'}); // Add this line
+            } else {
+                document.getElementById('currentPasswordError').textContent = data.error;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('currentPasswordError').textContent = 'An error occurred while changing the password.';
+        });
+    });
+    
+    document.querySelector('.profile-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        
+        fetch('{% url "update_profile" %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const formActions = document.querySelector('.form-actions');
+                const editButton = document.getElementById('editToggle');
+                const inputs = document.querySelectorAll('.profile-input');
+                
+                inputs.forEach(input => input.readOnly = true);
+                formActions.style.display = 'none';
+                editButton.style.display = 'block';
+                showTemporaryAlert('Profile updated successfully!');
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            } else {
+                console.error('Profile update error:', data);
+                showTemporaryAlert(data.message || 'An error occurred while updating your profile.', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+            showTemporaryAlert('An error occurred while updating your profile.', 'danger');
+        });
+    });
+
+    function showTemporaryAlert(message, type = 'success') {
+        // Create alert element
+        const alert = document.createElement('div');
+        alert.className = `alert alert-${type} alert-dismissible fade show`;
+        alert.style.cssText = `
+            min-width: 300px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        `;
+        alert.innerHTML = `
+            ${message}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        `;
+
+        // Add alert to container
+        document.getElementById('alert-container').appendChild(alert);
+
+        // Remove alert after 5 seconds
+        setTimeout(() => {
+            alert.classList.remove('show');
+            setTimeout(() => alert.remove(), 150);
+        }, 5000);
+    }
+
+    document.getElementById('profile_photo').addEventListener('change', function() {
+        document.getElementById('photoForm').submit();
+    });
+
+    document.querySelector('.save-majors').addEventListener('click', function() {
+        const selectedMajors = Array.from(document.querySelectorAll('.major-checkbox:checked'))
+            .map(checkbox => checkbox.value);
+        
+        fetch('{% url "update_majors" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({
+                majors: selectedMajors
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Close modal and refresh page
+                $('#majorModal').modal('hide');
+                window.location.reload();
+            }
+        });
+    });
+
+    document.getElementById('saveCustomMajor')?.addEventListener('click', function() {
+        const customMajorInput = document.getElementById('customMajorInput');
+        const validationError = document.getElementById('majorValidationError');
+        const majorName = customMajorInput.value.trim();
+
+        if (!majorName) {
+            validationError.textContent = 'Please enter a major name';
+            validationError.style.display = 'block';
+            return;
+        }
+
+        fetch('{% url "add_custom_major" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({
+                major_name: majorName
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.reload();
+            } else {
+                validationError.textContent = data.message;
+                validationError.style.display = 'block';
+            }
+        });
+    });
+</script>
+
+<!-- Update major options script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const maxSelections = 2;
+    
+    function handleMajorClick(element, event) {
+        
+        const checkbox = element.querySelector('.major-checkbox');
+        const checkedBoxes = document.querySelectorAll('.major-checkbox:checked');
+        
+        if (!checkbox.checked && checkedBoxes.length > maxSelections) {
+            return;
+        }
+        
+        checkbox.checked = !checkbox.checked;
+        checkbox.dispatchEvent(new Event('change'));
+    }
+    
+    window.handleMajorClick = handleMajorClick;
+});
+</script>
+{% endblock %}

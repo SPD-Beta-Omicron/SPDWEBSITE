@@ -1,0 +1,158 @@
+{% extends 'HOME/main.html' %}
+
+{% block content %}
+{% load tz %}
+<div class="current-poll-container">
+    <header class="poll-header">
+        <h1>Current Poll</h1>
+        <div class="header-actions">
+            <a href="{% url 'past_polls' %}" class="btn btn-secondary">View Past Polls</a>
+            <a href="{% url 'start_vote' %}" class="btn btn-primary">Start New Vote</a>
+           <!-- {% if perms.polls.add_vote_poll %} is how you would write it if you wanted to do it the safer django admin way
+                <a href="{% url 'start_vote' %}" class="btn btn-primary">Start New Vote</a>
+             {% endif %} -->
+            <label>
+                <input type="checkbox" id="live-update-toggle" unchecked>
+                Enable Live Updates
+            </label>
+            
+        </div>
+    </header>
+
+    {% if current_poll %}
+        <div class="active-poll">
+            <div class="poll-info">
+                 <h2>{{ current_poll.Vote_Poll_Name }}</h2>
+                <span class="poll-start-time">
+                    Started: {{ current_poll.Vote_Poll_Start|timezone:"America/Chicago"|date:"M d, Y g:i A" }}
+                </span>
+            </div>
+            
+            <div class="vote-section">
+                <form method="POST" class="vote-form">
+                    {% csrf_token %}
+                    <div class="vote-buttons">
+                        <button type="submit" name="aye" class="btn btn-success">Aye</button>
+                        <button type="submit" name="nay" class="btn btn-danger">Nay</button>
+                        <button type="submit" name="end_vote" class="btn btn-warning">End Vote</button>
+                        <!-- {% if perms.polls.change_vote_poll %} ->
+                        <button type="submit" name="end_vote" class="btn btn-warning">End Vote</button>
+                         {% endif %} -->
+                    </div>
+                </form>
+            </div>
+
+            <div class="results-section">
+                <h3>Current Results</h3>
+                <div class="vote-counts">
+                    <div class="vote-bar">
+                        {% with total=aye_votes|add:nay_votes %}
+                            {% if total > 0 %}
+                                <div class="vote-display">
+                                    <div id="aye-bar" class="aye-bar" 
+                                         style="flex-basis: {% widthratio aye_votes total 100 %}%; {% if aye_votes == 0 %}display: none;{% endif %}">
+                                         {{ aye_votes }} Aye
+                                    </div>
+                                    <div id="nay-bar" class="nay-bar" 
+                                         style="flex-basis: {% widthratio nay_votes total 100 %}%; {% if nay_votes == 0 %}display: none;{% endif %}">
+                                         {{ nay_votes }} Nay
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="no-votes">No votes yet</div>
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    {% else %}
+        <div class="no-active-poll">
+            <p>No active poll at the moment</p>
+            <!-- {% if perms.polls.add_vote_poll %}
+                <a href="{% url 'start_vote' %}" class="btn btn-primary">Start New Vote</a>
+            {% endif %} -->
+        </div>
+    {% endif %}
+
+</div>
+
+
+<!--Live Update Script-->
+<script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const liveUpdateCheckbox = document.getElementById("live-update-toggle");
+        // Retrieve the saved preference from localStorage, if available.
+        const liveUpdatePref = localStorage.getItem("liveUpdateEnabled");
+        if (liveUpdatePref !== null) {
+            liveUpdateCheckbox.checked = (liveUpdatePref === "true");
+        }
+
+        // Save preference on checkbox change.
+        liveUpdateCheckbox.addEventListener("change", function() {
+            localStorage.setItem("liveUpdateEnabled", liveUpdateCheckbox.checked);
+        });
+    });
+
+
+    async function fetchVoteCounts() {
+        // Check if Live Update is Enabled
+        const liveUpdateCheckbox = document.getElementById("live-update-toggle");
+        if (!liveUpdateCheckbox.checked) return;
+
+        try {
+            const response = await fetch("{% url 'poll_results' %}");
+            const data = await response.json();
+            updateVoteBars(data.aye_votes, data.nay_votes);
+        } catch (error) {
+            console.error('Error fetching vote counts:', error);
+        }
+    }
+
+    function updateVoteBars(ayeVotes, nayVotes) {
+        const totalVotes = ayeVotes + nayVotes;
+        const ayeBar = document.getElementById('aye-bar');
+        const nayBar = document.getElementById('nay-bar');
+
+        // If totalVotes is 0, reset both bars
+        if (totalVotes > 0) {
+            const ayePercentage = (ayeVotes / totalVotes) * 100;
+            const nayPercentage = (nayVotes / totalVotes) * 100;
+
+            ayeBar.style.flexBasis = `${ayePercentage}%`;
+            ayeBar.textContent = `${ayeVotes} Aye`;
+
+            nayBar.style.flexBasis = `${nayPercentage}%`;
+            nayBar.textContent = `${nayVotes} Nay`;
+
+            // Ensure bars are displayed even when there are 0 votes
+            if (ayeVotes === 0) {
+                ayeBar.style.display = 'none';
+            } else {
+                ayeBar.style.display = 'flex';
+            }
+
+            if (nayVotes === 0) {
+                nayBar.style.display = 'none';
+            } else {
+                nayBar.style.display = 'flex';
+            }
+        } else {
+            // If no votes yet
+            ayeBar.style.flexBasis = '0%';
+            ayeBar.textContent = '0 Aye';
+            nayBar.style.flexBasis = '0%';
+            nayBar.textContent = '0 Nay';
+        }
+    }
+
+
+    // Fetch vote counts every 5 seconds
+    setInterval(fetchVoteCounts, 1500);
+    // Initial fetch
+    fetchVoteCounts();
+</script>
+
+{% endblock %}

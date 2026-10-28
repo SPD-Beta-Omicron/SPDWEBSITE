@@ -1,0 +1,168 @@
+{% extends 'HOME/main.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="banner">
+    {% if banner_image %}
+        <img src="{{ banner_image.image.url }}" alt="Fraternity Banner" class="banner-image">
+    {% endif %}
+    <div class="banner-text">
+        <h1>Welcome to ΣΦΔ</h1>
+        <p>Science, Friendship, Duty</p>
+    </div>
+</div>
+
+<div class="homepage-content">
+    <h2 class="homepage-heading">Sigma Phi Delta: Beta-Omicron Chapter</h2>
+    <h5 class="homepage-subheading">University of Missouri, Columbia</h5>
+    <p style="text-align: center;">
+        The Beta-Omicron Chapter of Sigma Phi Delta is the premiere social and
+        professional Engineering fraternity at the University of Missouri. Our
+        closely-knit brotherhood is committed to developing strong professional
+        skills and relationships for their future careers, encouraging positive
+        social skills to aid in their personal endeavors, fostering scholastic success
+        in their academic pursuits, and promoting the development of life-long friendships.
+    </p>
+    <div class="button-container">
+        <a href="{% url 'rush' %}">
+            <button class="btn btn-primary" type="button">Rush Information</button>
+        </a>
+        <a href="{% if rush_form_link %}{{ rush_form_link.link }}{% else %}No Link Uploaded{% endif %}">
+            <button class="btn btn-primary" type="button">Rush Interest Form</button>
+        </a>
+    </div>
+    <br>
+    <div class="instagram-text-container">
+        <p class="instagram-subheading">Keep up with our events on Instagram!</p>
+        <div class="instagram-button-container">
+            <a href="https://www.instagram.com/sigphimizzou/">
+                <img class="instagram-posts" src="{% static 'images/instagram_posts.webp' %}" alt="Instagram Posts" loading="lazy"/>
+            </a>
+        </div>
+    </div>
+    
+    
+
+
+
+
+    
+    <div class="dropdown-section">
+        <button class="dropdown-toggle btn btn-primary wide-dropdown-toggle" type="button">
+           Professional <span class="dropdown-arrow">&#9656;</span>
+        </button>
+        <div id="dropdownContent" class="text-container dropdown-content">
+            <p>
+                One in three Sigma Phi Delta members participate in co-ops, internships, and study abroad opportunities.
+                Sigma Phi Delta is dedicated to helping their brothers to secure similar opportunities both during and
+                after their college experience. Sigma Phi Delta also regularly hosts professional speakers,
+                resume reviews, and other professional development events for their members. 
+            </p>
+            <div class="button-container">
+                <img src="{% static 'images/Black_and_Veatch.webp' %}" style="max-height: 50px;" loading="lazy">
+                <img src="{% static 'images/Boeing.webp' %}" style="max-height: 60px;" loading="lazy">
+                <img src="{% static 'images/Burns_and_McDonnell.png' %}" style="max-height: 20px;" loading="lazy">
+                <img src="{% static 'images/Cerner.webp' %}" style="max-height: 40px;" loading="lazy">
+                <img src="{% static 'images/Honeywell.webp' %}" style="max-height: 20px;" loading="lazy">
+                <img src="{% static 'images/NASA.webp' %}" style="max-height: 60px;" loading="lazy">
+            </div>
+        </div>
+    </div>
+    <div class="dropdown-section">
+        <button class="dropdown-toggle btn btn-primary wide-dropdown-toggle" type="button">
+            Philanthropy <span class="dropdown-arrow">&#9656;</span>
+        </button>
+        <div id="dropdownContent" class="text-container dropdown-content">
+            <p>
+                Sigma Phi Delta recognizes the importance of giving back to their community.
+                They are dedicated to volunteering their time at local non-profit organizations
+                and benefiting their national philanthropy FIRST©. Some of their frequent contributions
+                include The Food Bank for Central & Northeast Missouri, Ronald McDonald House, RAMS, and Adopt-A-Spot. 
+            </p>
+            <p>
+                Their national philanthropy FIRST© engages K-12 students in exciting, mentor-based, research and robotics
+                programs that help them become science and technology leaders, as well as well-rounded contributors
+                to society. FIRST© aims to empower students to enrich their lives, realize their potential, and become
+                outstanding future employees and citizens by fostering a passion for STEM subjects. 
+            </p>
+            <img src="{% static 'images/FIRST.webp' %}" style="max-height: 80px;" loading="lazy">
+        </div>
+    </div>
+    <div class="dropdown-section">
+        <button class="dropdown-toggle btn btn-primary wide-dropdown-toggle" type="button">
+            Academic <span class="dropdown-arrow">&#9656;</span>
+        </button>
+        <div id="dropdownContent" class="text-container dropdown-content">
+            <p>
+                <b>Success</b> <br>
+                Sigma Phi Delta prides itself on their consistent academic success.
+                Each semester, their chapter GPA is well above the all-male engineering average,
+                and they consistently rank well against other fraternity houses on campus. 
+                <br>
+                <b>Assistance</b> <br>
+                In order to ensure all of their active members and new members are held to the same
+                standard, each member is assigned an academic mentor in the same degree program.
+                They are also required to attend weekly study tables where they are surrounded by
+                an abundance of knowledge and resources in order to help them succeed. 
+                <br>
+                <b>Opportunity</b> <br>
+                In the interest of giving their members as many opportunities as possible for them
+                to further their academic and professional careers, they frequently have professors,
+                industry professionals, and employers present at their weekly chapter meetings. 
+            </p>
+        </div>
+    </div>
+    <div class="dropdown-section">
+        <button class="dropdown-toggle btn btn-primary wide-dropdown-toggle" type="button">
+            Social <span class="dropdown-arrow">&#9656;</span>
+        </button>
+        <div id="dropdownContent" class="text-container dropdown-content">
+            <p>
+                You truly aren't experiencing college if your only friends are your textbooks.
+                Sigma Phi Delta members are anything but the "typical" engineer. While they take the same classes,
+                help each other out with homework, and study together, they also know how to have a good time after the hard work is finished!
+                Sigma Phi Delta members regularly participate in formals, tailgates, socials, float trips, cook outs, and intramural sports.
+            </p>
+        </div>
+    </div>
+    
+
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+          const toggleButtons = document.querySelectorAll(".dropdown-toggle"); // Select all dropdown buttons
+          const transitionDuration = 500; // milliseconds, matches your CSS transition
+      
+          toggleButtons.forEach(toggleButton => {
+            toggleButton.addEventListener("click", function() {
+              // Find the corresponding dropdown content (next sibling)
+              const dropdownContent = this.nextElementSibling;
+      
+              // Ensure the dropdownContent exists
+              if (!dropdownContent || !dropdownContent.classList.contains("dropdown-content")) {
+                console.error("Dropdown content not found!");
+                return;
+              }
+      
+              const isOpening = !dropdownContent.classList.contains("show");
+      
+              // Toggle the dropdown content visibility
+              dropdownContent.classList.toggle("show", isOpening);
+              this.classList.toggle("open", isOpening);
+      
+              // If opening, smoothly scroll to make the dropdown visible
+              if (isOpening) {
+                setTimeout(() => {
+                  dropdownContent.scrollIntoView({ behavior: "smooth", block: "start" });
+                }, transitionDuration / 2); // Delay slightly to allow animation to begin
+              }
+            });
+          });
+        });
+      </script>
+      
+</div>
+
+{% endblock %}

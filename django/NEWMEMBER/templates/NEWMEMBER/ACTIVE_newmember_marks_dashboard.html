@@ -1,0 +1,218 @@
+{% extends 'HOME/main.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'PHILANTHROPY/philanthropy_dashboard.css' %}" />
+<div class="profile-container">
+    <div class="text-center mb-4">
+        <h2 class="homepage-heading">New Member Marks Dashboard</h2>
+    </div>    
+    
+    <div class="dashboard-buttons d-flex justify-content-center gap-3 mb-4">
+        <a href="{% url 'newmember_request' %}" class="btn btn-primary">Submit Marks</a>
+        <a href="{% url 'newmember_approve' %}" class="btn btn-primary">Review Pending Marks</a>
+    </div>
+
+    <!-- Active Member Insights Section -->
+    <div class="profile-card mb-4">
+        <h2 class="homepage-subheading mb-4">Insights Dashboard</h2>
+        <div class="insights-grid">
+            <div class="insight-card">
+                <div class="insight-title">CLASS OVERVIEW</div>
+                <div class="insight-value">{{ analytics.total_new_members }} New Members</div>
+                <div class="insight-subtitle">{{ analytics.members_in_good_standing }} in Good Standing</div>
+            </div>
+            <div class="insight-card">
+                <div class="insight-title">MARK STATISTICS</div>
+                <div class="insight-value">{{ analytics.average_marks }}</div>
+                <div class="insight-subtitle">Class Average</div>
+            </div>
+            <div class="insight-card">
+                <div class="insight-title">RECENT ACTIVITY</div>
+                <div class="insight-value">{{ analytics.marks_this_week }}</div>
+                <div class="insight-subtitle">Marks Given This Week</div>
+            </div>
+            <div class="insight-card">
+                <div class="insight-title">PENDING ACTIONS</div>
+                <div class="insight-value">{{ analytics.pending_requests }}</div>
+                <div class="insight-subtitle">Marks Awaiting Review</div>
+            </div>
+        </div>
+    </div>
+
+    {% if user_submitted_marks %}
+    <div class="profile-card mb-3">
+        <div class="text-center mb-3">
+            <h2 class="homepage-heading">Your Submitted Marks</h2>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table">
+                <thead style="background-color: #1a1a1a;">
+                    <tr>
+                        <th style="color: white; padding: 15px 20px;">NEW MEMBER</th>
+                        <th style="color: white; padding: 15px 20px;">REASON</th>
+                        <th style="color: white; padding: 15px 20px;">MARKS</th>
+                        <th style="color: white; padding: 15px 20px;">DATE</th>
+                        <th style="color: white; padding: 15px 20px;">STATUS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for mark in user_submitted_marks %}
+                    <tr {% if forloop.counter|divisibleby:2 %}style="background-color: #f9f9f9;"{% endif %}>
+                        <td data-label="NEW MEMBER" style="padding: 15px 20px;">{{ mark.target_user.brother_profile.firstName }} {{ mark.target_user.brother_profile.lastName }}</td>
+                        <td data-label="REASON" style="padding: 15px 20px;">{{ mark.mark_event_title }}</td>
+                        <td data-label="MARKS" style="padding: 15px 20px;" {% if mark.mark_value < 0 %}class="text-danger"{% endif %}>
+                            {{ mark.mark_value }}
+                        </td>
+                        <td data-label="DATE" style="padding: 15px 20px;">{{ mark.mark_event_date|date:"M d, Y" }}</td>
+                        <td data-label="STATUS" style="padding: 15px 20px;">
+                            <span class="badge {% if mark.mark_approval_status == 'approved' %}bg-success{% elif mark.mark_approval_status == 'denied' %}bg-danger{% else %}bg-warning{% endif %}">
+                                {{ mark.mark_approval_status }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">No marks submitted this semester</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+
+    <!-- New Member Progress -->
+    <div class="profile-card mb-4">
+        <h2 class="homepage-subheading">New Member Progress</h2>
+        <div class="centered-table">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>New Member</th>
+                        <th>Total Marks</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for member in new_members_progress %}
+                    <tr>
+                        <td data-label="New Member">
+                            <a href="{% url 'newmember_mark_history' member.user.id %}" 
+                               class="brother-link">
+                                {{ member.full_name }}
+                            </a>
+                        </td>
+                        <td data-label="Total Marks" {% if member.is_negative %}class="text-danger"{% endif %}>
+                            {{ member.total_marks }}
+                        </td>
+                        <td data-label="Status">
+                            <span class="badge {% if member.is_negative %}bg-danger{% else %}bg-success{% endif %}">
+                                {% if member.is_negative %}
+                                    Negative
+                                {% else %}
+                                    Good Standing
+                                {% endif %}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="dashboard-buttons d-flex justify-content-center gap-3 mb-4">
+        <form method="get" action="{% url 'export_newmember_marks' %}" style="width:100%">
+            <select name="pclass" class="form-select semester-select mb-1">
+                <option value="Current">Current Class</option>
+                {% for pclass in pclasses %}
+                    <option value="{{ pclass }}">{{ pclass }} Class</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-primary">Export Marks</button>
+        </form>
+    </div>
+
+</div>
+
+<style>
+
+
+.badge {
+    color: white;
+}
+
+.text-danger {
+    margin-top: 0 !important;
+}
+
+.insights-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    padding: 1.5rem;
+}
+
+.insight-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.insight-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.insight-title {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.insight-value {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #333;
+    line-height: 1.2;
+    word-wrap: break-word;
+}
+
+.insight-value br {
+    display: block;
+    margin: 0.3rem 0;
+}
+
+.insight-subtitle {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.text-success {
+    color: #2e7d32 !important;
+}
+
+.text-danger {
+    color: #c62828 !important;
+}
+
+@media (max-width: 768px) {
+    .insights-grid {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+    }
+    
+    .insight-card {
+        padding: 1rem;
+    }
+}
+</style>
+{% endblock %}
