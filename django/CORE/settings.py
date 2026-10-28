@@ -45,17 +45,8 @@ ENVIRONMENT = require_env('ENVIRONMENT')
 
 DEBUG = ENVIRONMENT != 'production'
 
-ALLOWED_HOSTS = [
-    'spdmizzou.com',
-    'www.spdmizzou.com',
-    'spdmizzou.org',
-    'www.spdmizzou.org',
-    'sigmaphideltamizzou.online',
-    'www.sigmaphideltamizzou.online',
-    '54.226.39.191',
-    'localhost',
-    '127.0.0.1',
-]
+# Comma-separated domains this site answers to, e.g. 'localhost,127.0.0.1'
+ALLOWED_HOSTS = [host.strip() for host in require_env('ALLOWED_HOSTS').split(',') if host.strip()]
 
 
 # ---------------------------------------------------------------------------

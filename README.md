@@ -21,6 +21,7 @@ Create the `.env` file to match this template
 SECRET_KEY='paste here'
 ADMIN_URL='admin'
 ENVIRONMENT='local'
+ALLOWED_HOSTS='localhost,127.0.0.1,spdmizzou.com,www.spdmizzou.com,spdmizzou.org,www.spdmizzou.org'
 ```
 Then paste the output of this command into the file as the `SECRET_KEY`
 ```bash
@@ -29,6 +30,8 @@ python3 -c "from django.core.management.utils import get_random_secret_key; prin
 Keep the single quotes around each value, since secret keys often contain characters like `$` and `#` that would otherwise be misread.
 
 You may change the admin path to whatever you wish. The environment should be set to `'local'` on your own computer and `'production'` only on the live server, since `'production'` turns off debug mode and forces HTTPS.
+
+`ALLOWED_HOSTS` is a comma-separated list of the domains the site answers to. Use `'localhost,127.0.0.1'` on your own computer; the live server lists the real domains.
 
 Never commit the `.env` file. It is already listed in `.gitignore`.
 
