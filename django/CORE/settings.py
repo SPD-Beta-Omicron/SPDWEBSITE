@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
-import sys
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,35 +27,24 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 #SECRET_KEY = 'django-insecure-9@j5+7m8qn+&6=*oexfi7m8vkt!3hio_n9f)o=0zfa2h0b#aak'
 
-############## The secret key is now imported from a python file in the same directory as the new database location
+############## Secrets are loaded from a .env file in the same directory as the database
 # Get the path to two directories above the current file (BASE_DIR)
 STORAGE_DIR = Path(BASE_DIR).parent.parent
 
-# Add the directory containing secret_config.py to sys.path
-sys.path.append(str(STORAGE_DIR))
+load_dotenv(STORAGE_DIR / '.env')
 
-# Now import the SECRET_KEY from secret_config.py
-try:
-    from secret_config import SECRET_KEY
-except ImportError:
-    raise ValueError(f"No SECRET_KEY found! Make sure the secret_config.py exists in {STORAGE_DIR}")
+def require_env(name):
+    value = os.environ.get(name)
+    if not value:
+        raise ValueError(f"No {name} found! Make sure the .env file exists in {STORAGE_DIR}")
+    return value
 
+SECRET_KEY = require_env('SECRET_KEY')
 
-# Imports the admin page url from the same file as the secret key
+# The admin page url, used in urls.py
+ADMIN_URL = require_env('ADMIN_URL')
 
-try:
-    from secret_config import ADMIN_URL
-except ImportError:
-    raise ValueError(f"No ADMIN_URL found! Make sure the secret_config.py exists in {STORAGE_DIR}")
-
-# Use the ADMIN_URL value to define the admin path
-ADMIN_URL = ADMIN_URL  # or set a default value in case it's not found
-
-
-try:
-    from secret_config import ENVIRONMENT
-except ImportError:
-    raise ValueError(f"No ENVIRONMENT found! Make sure the secret_config.py exists in {STORAGE_DIR}")
+ENVIRONMENT = require_env('ENVIRONMENT')
 
 
 
