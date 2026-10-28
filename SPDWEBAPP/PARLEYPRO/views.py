@@ -31,7 +31,7 @@ def poll_index(request):
         'aye_votes': aye_votes,
         'current_poll': current_poll,
     }
-    return render(request, 'poll_index.html', context)
+    return render(request, 'PARLEYPRO/poll_index.html', context)
 @login_required
 @requires_role('EXEC','ACTIVE')
 def start_vote(request):
@@ -47,7 +47,7 @@ def start_vote(request):
         form = VotePollForm()
     
     context = {'form': form}
-    return render(request, 'create_poll.html', context)
+    return render(request, 'PARLEYPRO/create_poll.html', context)
 @requires_role('ACTIVE')
 @login_required
 def past_polls(request):
@@ -55,7 +55,7 @@ def past_polls(request):
         Vote_Poll_End__isnull=False
     ).order_by('-Vote_Poll_End')
     
-    return render(request, 'past_polls.html', {'past_polls': past_polls})
+    return render(request, 'PARLEYPRO/past_polls.html', {'past_polls': past_polls})
 
 
 @login_required # Used for Live Update

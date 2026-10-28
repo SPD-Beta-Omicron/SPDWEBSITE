@@ -22,7 +22,7 @@ def sobersheet_dashboard(request):
         'is_risk_manager': _is_risk_manager(request.user),
         'exempt_brothers': build_exempt_list(),
     }
-    return render(request, 'sobersheet_dashboard.html', context)
+    return render(request, 'SOBERSHEET/sobersheet_dashboard.html', context)
 
 
 @login_required
@@ -32,7 +32,7 @@ def sobersheet_history(request):
         'history_groups': group_history_by_event(),
         'is_risk_manager': _is_risk_manager(request.user),
     }
-    return render(request, 'sobersheet_history.html', context)
+    return render(request, 'SOBERSHEET/sobersheet_history.html', context)
 
 @login_required
 @requires_role('ACTIVE')
@@ -50,7 +50,7 @@ def brother_sobersheet_history(request, user_id):
         'lifetime_total': lifetime_total,
         'is_risk_manager': _is_risk_manager(request.user),
     }
-    return render(request, 'brother_sobersheet_history.html', context)
+    return render(request, 'SOBERSHEET/brother_sobersheet_history.html', context)
 
 @login_required
 @requires_role('RISK_MGR')
@@ -89,7 +89,7 @@ def sobersheet_log(request):
         except Exception as e:
             messages.error(request, f'Error logging sober duty: {str(e)}')
 
-    return render(request, 'sobersheet_log.html', {
+    return render(request, 'SOBERSHEET/sobersheet_log.html', {
         'brothers': active,
         'duty_choices': Sober_Duty.DUTY_CHOICES,
         'preselected': set(request.GET.getlist('brothers')),
@@ -120,7 +120,7 @@ def sobersheet_edit(request, duty_id):
         except Exception as e:
             messages.error(request, f'Error updating: {str(e)}')
 
-    return render(request, 'sobersheet_log.html', {
+    return render(request, 'SOBERSHEET/sobersheet_log.html', {
         'editing': True,
         'duty': duty,
         'duty_choices': Sober_Duty.DUTY_CHOICES,
@@ -157,5 +157,4 @@ def sobersheet_picker(request):
                 messages.warning(request, f'Only {len(picks)} eligible brothers exist, so fewer than {count} were returned.')
         except (ValueError, KeyError) as e:
             messages.error(request, f'Error: {str(e)}')
-
-    return render(request, 'sobersheet_picker.html', context)
+    return render(request, 'SOBERSHEET/sobersheet_picker.html', context)

@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from AUTHENTICATE.models import PClass
 
 def newmember_dashboard(request):
-    return render(request, 'newmember_dashboard.html')
+    return render(request, 'NEWMEMBER/newmember_dashboard.html')
 
 @login_required
 def newmember_marks_dashboard(request):
@@ -39,7 +39,7 @@ def newmember_marks_dashboard(request):
         'pclasses': sorted_pclasses
     }
     
-    template_name = 'ACTIVE_newmember_marks_dashboard.html' if is_active else 'newmember_marks_dashboard.html'
+    template_name = 'NEWMEMBER/ACTIVE_newmember_marks_dashboard.html' if is_active else 'NEWMEMBER/newmember_marks_dashboard.html'
 
     return render(request, template_name, context)
 
@@ -65,7 +65,7 @@ def newmember_request(request):
         return redirect('newmember_marks_dashboard')
     
     new_members = get_new_members()
-    return render(request, 'newmember_marks_request.html', {'new_members': new_members})
+    return render(request, 'NEWMEMBER/newmember_marks_request.html', {'new_members': new_members})
 
 @login_required
 def newmember_approve(request):
@@ -86,7 +86,7 @@ def newmember_approve(request):
     
     pending_requests = get_pending_mark_requests()
     
-    return render(request, 'newmember_marks_approve.html', {
+    return render(request, 'NEWMEMBER/newmember_marks_approve.html', {
         'pending_requests': pending_requests
     })
 
@@ -110,7 +110,7 @@ def newmember_mark_history(request, user_id):
             'is_nm_board': is_nm_board,
         }
         
-        return render(request, 'newmember_marks_history.html', context)
+        return render(request, 'NEWMEMBER/newmember_marks_history.html', context)
         
     except Brother_Profile.DoesNotExist:
         messages.error(request, 'New Member not found.')
@@ -172,7 +172,7 @@ def newmember_edit_mark(request, mark_id):
         'editing': True,
         'mark': mark
     }
-    return render(request, 'newmember_marks_request.html', context)
+    return render(request, 'NEWMEMBER/newmember_marks_request.html', context)
 
 # Code for exporting the new member marks into a spreadsheet
 import io

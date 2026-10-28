@@ -54,7 +54,7 @@ def philanthropy_dashboard(request):
         'year_label': f"{selected_year}–{selected_year+1} Academic Year"
     }
     
-    return render(request, 'philanthropy_dashboard.html', context)
+    return render(request, 'PHILANTHROPY/philanthropy_dashboard.html', context)
 
 @login_required
 @requires_role('ACTIVE')
@@ -78,7 +78,7 @@ def philanthropy_request(request):
         except Exception as e:
             messages.error(request, f'Error submitting hours: {str(e)}')
     
-    return render(request, 'philanthropy_request.html')
+    return render(request, 'PHILANTHROPY/philanthropy_request.html')
 
 @requires_role('PHIL_CHAIR','ACTIVE')
 @login_required
@@ -92,7 +92,7 @@ def philanthropy_approve(request):
         philanthropy_approval_status='requested'
     ).select_related('user', 'user__brother_profile').order_by('-philanthropy_event_date')
     
-    return render(request, 'philanthropy_approve.html', {'pending_requests': pending_requests})
+    return render(request, 'PHILANTHROPY/philanthropy_approve.html', {'pending_requests': pending_requests})
 
 
 @login_required
@@ -113,7 +113,7 @@ def brother_philanthropy_history(request, user_id):
         }
 
         
-        return render(request, 'philanthropy_brother_history.html', context)
+        return render(request, 'PHILANTHROPY/philanthropy_brother_history.html', context)
         
     except Brother_Profile.DoesNotExist:
         messages.error(request, 'Brother not found.')
@@ -266,4 +266,4 @@ def philanthropy_edit_event(request, event_id):
         'editing': True,
         'event': event
     }
-    return render(request, 'philanthropy_request.html', context)
+    return render(request, 'PHILANTHROPY/philanthropy_request.html', context)

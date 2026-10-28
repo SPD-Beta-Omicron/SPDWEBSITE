@@ -17,4 +17,4 @@ def daylight_savings_alert(request):
         'show_alert': True,
     }
     
-    return render(request, 'dls_alert.html', context)
+    return render(request, 'MISC/dls_alert.html', context)
