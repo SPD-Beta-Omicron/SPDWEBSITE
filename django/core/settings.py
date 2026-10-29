@@ -18,10 +18,6 @@ from dotenv import load_dotenv
 # The django/ folder that holds manage.py
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Two folders above BASE_DIR, outside the git repo. Holds .env, db.sqlite3,
-# media/ and staticfiles/ so they are never committed.
-STORAGE_DIR = BASE_DIR.parent.parent
-
 
 # ---------------------------------------------------------------------------
 # Secrets and environment (from .env)
@@ -34,6 +30,9 @@ def require_env(name):
     if not value:
         raise ValueError(f"No {name} found! Make sure the .env file exists in {STORAGE_DIR}")
     return value
+
+# Always store outside the git repo. Holds .env, db.sqlite3, media/ and staticfiles/
+STORAGE_DIR = require_env('STORAGE_DIR')
 
 SECRET_KEY = require_env('SECRET_KEY')
 
