@@ -54,13 +54,34 @@ jobs:
             type=raw,value=latest,enable={{is_default_branch}}
             type=sha,prefix=
 
-      - name: Build and push
+      - name: Build image for testing
         uses: docker/build-push-action@v7
         with:
           context: .
           file: Containerization/Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
+          load: true
+          tags: spdwebsite:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Run tests
+        run: |
+          docker run --rm \
+            --entrypoint python \
+            -e SECRET_KEY=ci-only-not-a-real-secret \
+            -e ADMIN_URL=admin \
+            -e ENVIRONMENT=ci \
+            -e ALLOWED_HOSTS=localhost \
+            spdwebsite:test \
+            manage.py test --verbosity 2
+
+      - name: Push image
+        if: github.event_name != 'pull_request'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: Containerization/Dockerfile
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
-          cache-to: type=gha,mode=max
