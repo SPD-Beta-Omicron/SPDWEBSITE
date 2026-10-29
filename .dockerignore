@@ -23,6 +23,6 @@ venv
 
 # Not needed to run the site
 Documentation
+Containerization
 README.md
-Dockerfile
 .dockerignore
