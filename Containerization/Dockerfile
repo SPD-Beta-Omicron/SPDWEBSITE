@@ -17,9 +17,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /app
 
 # Install python dependencies
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-
+COPY requirements.txt ./requirements.txt
+COPY Containerization/container-requirements.txt ./container-requirements.txt
+RUN pip install -r requirements.txt -r container-requirements.txt
+    
 # Create a non-root user and set permissions for the storage directory
 RUN useradd --uid 1000 --no-create-home --shell /usr/sbin/nologin app \
     && mkdir -p /data \
