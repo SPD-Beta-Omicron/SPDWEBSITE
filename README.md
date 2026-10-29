@@ -22,7 +22,6 @@ SECRET_KEY='paste here'
 ADMIN_URL='admin'
 ENVIRONMENT='local'
 ALLOWED_HOSTS='localhost,127.0.0.1,spdmizzou.com,www.spdmizzou.com,spdmizzou.org,www.spdmizzou.org'
-STORAGE_DIR='BASE_DIR.parent.parent'
 ```
 Then paste the output of this command into the file as the `SECRET_KEY`
 ```bash
