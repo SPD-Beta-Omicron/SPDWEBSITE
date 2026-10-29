@@ -3,8 +3,8 @@
 .idea
 
 # Python artifacts and local environments
-**/__pycache__
-**/*.py[cod]
+__pycache__/
+*.py[cod]
 .venv
 venv
 
@@ -13,8 +13,8 @@ venv
 *.pot
 
 # Data and secrets: these belong in STORAGE_DIR, never in the image
-**/*.sqlite3
-**/.env
-**/*.pem
-**/media
-**/staticfiles
+*.sqlite3
+.env
+*.pem
+media/
+staticfiles/
