@@ -1,0 +1,28 @@
+# Version control and editor clutter
+.git
+.gitignore
+.vscode
+.idea
+
+# Python artifacts and local environments
+**/__pycache__
+**/*.py[cod]
+.venv
+venv
+
+# Django stuff:
+*.log
+*.pot
+
+# Data and secrets: these belong in STORAGE_DIR, never in the image
+**/*.sqlite3
+**/.env
+**/*.pem
+**/media
+**/staticfiles
+
+# Not needed to run the site
+Documentation
+README.md
+Dockerfile
+.dockerignore
