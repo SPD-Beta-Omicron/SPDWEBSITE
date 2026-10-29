@@ -3,6 +3,8 @@
 
 FROM docker.io/library/python:3.14-slim-trixie
 
+LABEL org.opencontainers.image.source="https://github.com/SPD-Beta-Omicron/SPDWEBSITE"
+
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
