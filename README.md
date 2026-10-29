@@ -3,8 +3,8 @@
 For security purposes, the website keeps the database, secret key, development environment, and the path to the admin panel *outside the git repo*, in the folder that contains it:
 
 ```
-SPDWebsite/              <- put .env and db.sqlite3 here
-├── .env
+SPDWebsite/              <- put .env and db.sqlite3 here, can be stored elsewhere with the STORAGE_DIR environment variable
+├── .env                 <- Must be located here unless STORAGE_DIR is manually set in the dockerfile, compose file, or command line
 ├── db.sqlite3
 ├── .venv/
 └── SPDWEBSITE/          <- this git repo

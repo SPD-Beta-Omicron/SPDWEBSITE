@@ -18,9 +18,12 @@ from dotenv import load_dotenv
 # The django/ folder that holds manage.py
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Two folders above BASE_DIR, outside the git repo. Holds .env, db.sqlite3,
-# media/ and staticfiles/ so they are never committed.
-STORAGE_DIR = BASE_DIR.parent.parent
+# Always store outside the git repo. Holds .env, db.sqlite3, media/ and staticfiles/
+# Note that this only works if the docker container is run with the STORAGE_DIR environment variable is set in the run command, the dockerfil, the compose file, or the process environment.
+# This cannot be loaded from .env because .env is stored in STORAGE_DIR, so we need to get STORAGE_DIR from the environment first.
+# # In the dockerfile, this will default to STORAGE_DIR=/data
+# If STORAGE_DIR is not set, it defaults to the parent of the parent of BASE_DIR (one above the root of the git repo).
+STORAGE_DIR = Path(os.environ.get('STORAGE_DIR', BASE_DIR.parent.parent))
 
 
 # ---------------------------------------------------------------------------
