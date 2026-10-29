@@ -1,9 +1,11 @@
 asgiref==3.12.1
 Django==6.1.1
-sqlparse==0.6.0
-typing_extensions==4.16.0
+django-admin-sortable2==2.3.1
+et_xmlfile==2.0.0
+gunicorn==26.2.0
+openpyxl==3.1.5
+pillow==12.3.0
 python-dotenv==1.2.4
 pytz==2026.3
-pillow==12.3.0
-openpyxl==3.1.5
-django-admin-sortable2==2.3.1
+sqlparse==0.6.0
+typing_extensions==4.16.0
