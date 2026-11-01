@@ -1,7 +1,7 @@
 # Python/Django code located in /app
 # Media, static, and other files stored in /data
 
-FROM docker.io/library/python:3.14-slim-trixie
+FROM docker.io/library/python:3.15-slim-trixie
 
 LABEL org.opencontainers.image.source="https://github.com/SPD-Beta-Omicron/SPDWEBSITE"
 
